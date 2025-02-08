@@ -4,9 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ابزارهای IP – رابط کاربری کلاسیک</title>
+  <title>دی ان اس اختصاصی</title>
   <style>
-    /* استایل‌های کلی برای ظاهر کلاسیک (شبیه به ویندوز ۹۸) */
+    /* استفاده از box-sizing: border-box برای محاسبه درست اندازه‌ها */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       background: #008080;
       font-family: "MS Sans Serif", Tahoma, sans-serif;
@@ -14,7 +18,7 @@
       padding: 0;
     }
 
-    /* استایل اختصاصی برای دکمه‌ها به سبک ویندوز ۹۸ */
+    /* استایل دکمه‌ها به سبک ویندوز ۹۸ */
     button,
     input[type="button"],
     input[type="submit"] {
@@ -28,13 +32,12 @@
       border-radius: 0;
       box-shadow: none;
       text-shadow: none;
-      /* حذف ظاهر پیش‌فرض مرورگر */
       appearance: none;
     }
 
-    /* استایل صفحه ورود */
+    /* صفحه ورود با عرض ثابت */
     .login-container {
-      max-width: 400px;
+      width: 400px;
       margin: 50px auto;
       background: #c0c0c0;
       padding: 20px;
@@ -50,14 +53,25 @@
       background: #fff;
     }
 
-    /* دکمه‌های ورود از استایل دکمه‌های عمومی استفاده می‌کنند */
+    /* المان لودینگ ورود (مخفی به‌صورت پیش‌فرض) */
+    #login-loading {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background: #f0f0f0;
+      border: 2px inset #fff;
+      margin-top: 10px;
+    }
+
+    /* پاکسازی فلو */
     .clear {
       clear: both;
     }
 
-    /* استایل رابط کاربری کلاسیک */
+    /* رابط کاربری کلاسیک با عرض ثابت */
     .classic-ui {
-      max-width: 800px;
+      width: 800px;
       margin: 20px auto;
       background: #c0c0c0;
       padding: 10px;
@@ -112,6 +126,11 @@
       margin: 2px;
       border: 2px inset #fff;
       background: #fff;
+      width: calc(100% - 10px);
+    }
+
+    .section textarea {
+      resize: none;
     }
 
     .loading {
@@ -180,6 +199,8 @@
       <button type="submit">ورود</button>
       <div class="clear"></div>
     </form>
+    <!-- المان لودینگ ورود -->
+    <div id="login-loading">در حال بارگذاری...</div>
     <div id="login-error" style="color:red; display:none;">اعتبارسنجی ناموفق</div>
   </div>
 
@@ -187,13 +208,14 @@
   <div id="main-page" style="display: none;">
     <div class="classic-ui">
       <header class="main-header">
-        <h1>وبسایت کلاسیک</h1>
+        <h1>وبسایت دریافت دی ان اس اختصاصی</h1>
         <nav>
           <ul>
             <li><a href="#">ویدئوها</a></li>
           </ul>
         </nav>
       </header>
+
       <!-- بخش IPv4 -->
       <div class="section" id="ipv4-section">
         <div class="loading">در حال پردازش...</div>
@@ -211,7 +233,7 @@
         </div>
         <div>
           <label for="ipv4-count">تعداد IP برای تولید:</label>
-          <input type="number" id="ipv4-count" value="1" min="1" max="100">
+          <input type="number" id="ipv4-count" value="1" min="1" max="5">
           <div class="clear"></div>
         </div>
         <div>
@@ -249,7 +271,7 @@
         </div>
         <div>
           <label for="ipv6-count">تعداد IP برای تولید:</label>
-          <input type="number" id="ipv6-count" value="1" min="1" max="100">
+          <input type="number" id="ipv6-count" value="1" min="1" max="5">
           <div class="clear"></div>
         </div>
         <div>
@@ -292,592 +314,602 @@
       </div>
       <div id="toast" class="toast"></div>
     </div>
+  </div>
 
-    <script type="module">
-      // ---------- توابع تبدیل تاریخ شمسی به میلادی ----------
-      function jalaliToJDN(jy, jm, jd) {
-        var epbase = jy - (jy >= 0 ? 474 : 473);
-        var epyear = 474 + (epbase % 2820);
-        return jd +
-          (jm <= 7 ? (jm - 1) * 31 : ((jm - 1) * 30) + 6) +
-          Math.floor((epyear * 682 - 110) / 2816) +
-          (epyear - 1) * 365 +
-          Math.floor(epbase / 2820) * 1029983 +
-          (1948320 - 1);
-      }
+  <script type="module">
+    // ---------- توابع تبدیل تاریخ شمسی به میلادی ----------
+    function jalaliToJDN(jy, jm, jd) {
+      var epbase = jy - (jy >= 0 ? 474 : 473);
+      var epyear = 474 + (epbase % 2820);
+      return jd +
+        (jm <= 7 ? (jm - 1) * 31 : ((jm - 1) * 30) + 6) +
+        Math.floor((epyear * 682 - 110) / 2816) +
+        (epyear - 1) * 365 +
+        Math.floor(epbase / 2820) * 1029983 +
+        (1948320 - 1);
+    }
 
-      function d2g(jdn) {
-        var j = 4 * jdn + 139361631;
-        j = j + Math.floor((Math.floor((4 * jdn + 183187720)) / 146097)) * 3 / 4 - 3908;
-        var i = Math.floor((j % 1461) / 4) * 5 + 308;
-        var gd = Math.floor((i % 153) / 5) + 1;
-        var gm = ((Math.floor(i / 153) % 12) + 1);
-        var gy = Math.floor(j / 1461) - 100100 + Math.floor((8 - gm) / 6);
-        return { gy: gy, gm: gm, gd: gd };
-      }
+    function d2g(jdn) {
+      var j = 4 * jdn + 139361631;
+      j = j + Math.floor((Math.floor((4 * jdn + 183187720)) / 146097)) * 3 / 4 - 3908;
+      var i = Math.floor((j % 1461) / 4) * 5 + 308;
+      var gd = Math.floor((i % 153) / 5) + 1;
+      var gm = ((Math.floor(i / 153) % 12) + 1);
+      var gy = Math.floor(j / 1461) - 100100 + Math.floor((8 - gm) / 6);
+      return { gy: gy, gm: gm, gd: gd };
+    }
 
-      function jalaliToGregorian(jy, jm, jd) {
-        var jdn = jalaliToJDN(jy, jm, jd);
-        return d2g(jdn);
-      }
+    function jalaliToGregorian(jy, jm, jd) {
+      var jdn = jalaliToJDN(jy, jm, jd);
+      return d2g(jdn);
+    }
 
-      function parseJalaliDate(jalaliDateStr) {
-        // فرمت ورودی: dd/mm/yyyy (مثلاً "22/11/1403")
-        var parts = jalaliDateStr.split("/");
-        if (parts.length !== 3) return null;
-        var jd = parseInt(parts[0], 10);
-        var jm = parseInt(parts[1], 10);
-        var jy = parseInt(parts[2], 10);
-        var g = jalaliToGregorian(jy, jm, jd);
-        return new Date(g.gy, g.gm - 1, g.gd);
-      }
+    function parseJalaliDate(jalaliDateStr) {
+      // فرمت ورودی: dd/mm/yyyy (مثلاً "22/11/1403")
+      var parts = jalaliDateStr.split("/");
+      if (parts.length !== 3) return null;
+      var jd = parseInt(parts[0], 10);
+      var jm = parseInt(parts[1], 10);
+      var jy = parseInt(parts[2], 10);
+      var g = jalaliToGregorian(jy, jm, jd);
+      return new Date(g.gy, g.gm - 1, g.gd);
+    }
 
-      // ---------- کلاس‌های مشترک (IPState, IPUtils) ----------
-      class IPState {
-        constructor(maxHistoryItems = 20, storageKey = null) {
-          this.ranges = new Map();
-          this.maxHistoryItems = maxHistoryItems;
-          this.observers = new Set();
-          this.storageKey = storageKey;
-          if (this.storageKey) {
-            const stored = localStorage.getItem(this.storageKey);
-            if (stored) {
-              try {
-                this.history = JSON.parse(stored);
-              } catch (e) {
-                this.history = [];
-              }
-            } else {
+    // ---------- کلاس‌های مشترک (IPState, IPUtils) ----------
+    class IPState {
+      constructor(maxHistoryItems = 20, storageKey = null) {
+        this.ranges = new Map();
+        this.maxHistoryItems = maxHistoryItems;
+        this.observers = new Set();
+        this.storageKey = storageKey;
+        if (this.storageKey) {
+          const stored = localStorage.getItem(this.storageKey);
+          if (stored) {
+            try {
+              this.history = JSON.parse(stored);
+            } catch (e) {
               this.history = [];
             }
           } else {
             this.history = [];
           }
-        }
-        addRange(range, type = "custom") {
-          if (!this.ranges.has(range)) {
-            this.ranges.set(range, { type });
-            this.notifyObservers("ranges");
-          }
-        }
-        removeRange(range) {
-          if (this.ranges.has(range)) {
-            this.ranges.delete(range);
-            this.notifyObservers("ranges");
-          }
-        }
-        addToHistory(entry) {
-          this.history.unshift(entry);
-          if (this.history.length > this.maxHistoryItems) {
-            this.history.pop();
-          }
-          this.notifyObservers("history");
-          if (this.storageKey) {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.history));
-          }
-        }
-        clearHistory() {
+        } else {
           this.history = [];
-          this.notifyObservers("history");
-          if (this.storageKey) {
-            localStorage.removeItem(this.storageKey);
-          }
-        }
-        addObserver(observer) {
-          this.observers.add(observer);
-        }
-        notifyObservers(type) {
-          this.observers.forEach(observer => observer(type));
         }
       }
-
-      class IPUtils {
-        static ipv4Cache = new Map();
-        static ipv6Cache = new Map();
-        static async ipv4ToInt(ip) {
-          if (this.ipv4Cache.has(ip)) return this.ipv4Cache.get(ip);
-          const parts = ip.split(".");
-          if (parts.length !== 4) throw new Error("آدرس IPv4 نامعتبر است.");
-          let result = 0;
-          for (let i = 0; i < 4; i++) {
-            const part = parseInt(parts[i], 10);
-            if (isNaN(part) || part < 0 || part > 255) {
-              throw new Error("بخش‌های IPv4 باید بین 0 تا 255 باشند.");
-            }
-            result = (result << 8) + part;
-          }
-          this.ipv4Cache.set(ip, result);
-          return result;
-        }
-        static intToIPv4(num) {
-          return [
-            (num >>> 24) & 0xff,
-            (num >>> 16) & 0xff,
-            (num >>> 8) & 0xff,
-            num & 0xff
-          ].join(".");
-        }
-        static async expandIPv6Address(address) {
-          if (this.ipv6Cache.has(address)) return this.ipv6Cache.get(address);
-          const parts = address.split("::");
-          if (parts.length > 2) throw new Error("آدرس IPv6 نامعتبر است.");
-          const head = parts[0] ? parts[0].split(":") : [];
-          const tail = parts[1] ? parts[1].split(":") : [];
-          const missing = 8 - (head.length + tail.length);
-          if (missing < 0) throw new Error("آدرس IPv6 نامعتبر است.");
-          const fullAddress = [
-            ...head,
-            ...Array(missing).fill("0"),
-            ...tail
-          ].map(part => part.padStart(4, "0"));
-          this.ipv6Cache.set(address, fullAddress);
-          return fullAddress;
+      addRange(range, type = "custom") {
+        if (!this.ranges.has(range)) {
+          this.ranges.set(range, { type });
+          this.notifyObservers("ranges");
         }
       }
+      removeRange(range) {
+        if (this.ranges.has(range)) {
+          this.ranges.delete(range);
+          this.notifyObservers("ranges");
+        }
+      }
+      addToHistory(entry) {
+        this.history.unshift(entry);
+        if (this.history.length > this.maxHistoryItems) {
+          this.history.pop();
+        }
+        this.notifyObservers("history");
+        if (this.storageKey) {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.history));
+        }
+      }
+      clearHistory() {
+        this.history = [];
+        this.notifyObservers("history");
+        if (this.storageKey) {
+          localStorage.removeItem(this.storageKey);
+        }
+      }
+      addObserver(observer) {
+        this.observers.add(observer);
+      }
+      notifyObservers(type) {
+        this.observers.forEach(observer => observer(type));
+      }
+    }
 
-      function randomBigInt(max) {
-        const bits = max.toString(2).length;
-        const bytes = Math.ceil(bits / 8);
-        let rand;
-        do {
-          const randomBytes = new Uint8Array(bytes);
-          window.crypto.getRandomValues(randomBytes);
-          let hex = "";
-          randomBytes.forEach(byte => {
-            hex += byte.toString(16).padStart(2, "0");
+    class IPUtils {
+      static ipv4Cache = new Map();
+      static ipv6Cache = new Map();
+      static async ipv4ToInt(ip) {
+        if (this.ipv4Cache.has(ip)) return this.ipv4Cache.get(ip);
+        const parts = ip.split(".");
+        if (parts.length !== 4) throw new Error("آدرس IPv4 نامعتبر است.");
+        let result = 0;
+        for (let i = 0; i < 4; i++) {
+          const part = parseInt(parts[i], 10);
+          if (isNaN(part) || part < 0 || part > 255) {
+            throw new Error("بخش‌های IPv4 باید بین 0 تا 255 باشند.");
+          }
+          result = (result << 8) + part;
+        }
+        this.ipv4Cache.set(ip, result);
+        return result;
+      }
+      static intToIPv4(num) {
+        return [
+          (num >>> 24) & 0xff,
+          (num >>> 16) & 0xff,
+          (num >>> 8) & 0xff,
+          num & 0xff
+        ].join(".");
+      }
+      static async expandIPv6Address(address) {
+        if (this.ipv6Cache.has(address)) return this.ipv6Cache.get(address);
+        const parts = address.split("::");
+        if (parts.length > 2) throw new Error("آدرس IPv6 نامعتبر است.");
+        const head = parts[0] ? parts[0].split(":") : [];
+        const tail = parts[1] ? parts[1].split(":") : [];
+        const missing = 8 - (head.length + tail.length);
+        if (missing < 0) throw new Error("آدرس IPv6 نامعتبر است.");
+        const fullAddress = [
+          ...head,
+          ...Array(missing).fill("0"),
+          ...tail
+        ].map(part => part.padStart(4, "0"));
+        this.ipv6Cache.set(address, fullAddress);
+        return fullAddress;
+      }
+    }
+
+    function randomBigInt(max) {
+      const bits = max.toString(2).length;
+      const bytes = Math.ceil(bits / 8);
+      let rand;
+      do {
+        const randomBytes = new Uint8Array(bytes);
+        window.crypto.getRandomValues(randomBytes);
+        let hex = "";
+        randomBytes.forEach(byte => {
+          hex += byte.toString(16).padStart(2, "0");
+        });
+        rand = BigInt("0x" + hex);
+      } while (rand >= max);
+      return rand;
+    }
+
+    function bigIntToIPv6(bigInt) {
+      let hex = bigInt.toString(16).padStart(32, "0");
+      const parts = [];
+      for (let i = 0; i < 32; i += 4) {
+        parts.push(hex.substr(i, 4));
+      }
+      return parts.join(":");
+    }
+
+    // ---------- کلاس UIManager برای رابط کلاسیک ----------
+    class UIManager {
+      constructor(version, prefix) {
+        this.version = version; // "IPv4" یا "IPv6"
+        this.prefix = prefix;   // "ipv4" یا "ipv6"
+        this.state = new IPState(20, this.version === "IPv4" ? "IPv4History" : "IPv6History");
+        this.setupElements();
+        this.setupEventListeners();
+        this.addDefaultRanges();
+      }
+      setupElements() {
+        this.elements = {
+          section: document.getElementById(`${this.prefix}-section`),
+          rangeInput: document.getElementById(`${this.prefix}-range-input`),
+          rangeList: document.getElementById(`${this.prefix}-range-list`),
+          countInput: document.getElementById(`${this.prefix}-count`),
+          result: document.getElementById(`${this.prefix}-result`),
+          history: document.getElementById(`${this.prefix}-history`),
+          loading: document.querySelector(`#${this.prefix}-section .loading`),
+          buttons: {
+            addRange: document.getElementById(`${this.prefix}-add-range`),
+            removeRange: document.getElementById(`${this.prefix}-remove-range`),
+            generate: document.getElementById(`${this.prefix}-generate`),
+            copy: document.getElementById(`${this.prefix}-copy`),
+            clearHistory: document.getElementById(`${this.prefix}-clear-history`),
+            downloadHistory: document.getElementById(`${this.prefix}-download-history`)
+          }
+        };
+      }
+      setupEventListeners() {
+        this.elements.buttons.addRange.addEventListener("click", () => this.handleAddRange());
+        this.elements.buttons.removeRange.addEventListener("click", () => this.handleRemoveRange());
+        this.elements.buttons.generate.addEventListener("click", () => this.handleGenerate());
+        this.elements.buttons.copy.addEventListener("click", () => this.handleCopy());
+        this.elements.buttons.clearHistory.addEventListener("click", () => this.handleClearHistory());
+        this.elements.buttons.downloadHistory.addEventListener("click", () => this.handleDownloadHistory());
+        this.state.addObserver((type) => this.updateUI(type));
+      }
+      addDefaultRanges() {
+        if (this.version === "IPv4") {
+          const defaults = [
+            "45.8.0.0/16",
+            "85.10.0.0/16",
+            "93.186.0.0/16",
+            "45.141.0.0/16",
+            "185.83.0.0/16",
+            "194.26.0.0/16",
+            "91.149.0.0/16",
+            "95.85.0.0/16",
+            "178.248.0.0/16",
+            "31.223.0.0/16",
+            "88.255.0.0/16",
+            "185.29.0.0/16",
+            "103.253.0.0/16",
+            "139.99.0.0/16",
+            "192.53.0.0/16"
+          ];
+          defaults.forEach(range => this.state.addRange(range, "default"));
+        } else {
+          const defaults = [
+            "2a01:4f8::/32",
+            "2a03:b0c0::/32",
+            "2a00:1450::/32",
+            "2a01:358::/32",
+            "2400:6180::/32"
+          ];
+          defaults.forEach(range => this.state.addRange(range, "default"));
+        }
+      }
+      async handleAddRange() {
+        const cidr = this.elements.rangeInput.value.trim();
+        if (!cidr) {
+          this.showToast("لطفاً یک CIDR معتبر وارد کنید.");
+          return;
+        }
+        try {
+          await this.validateRange(cidr);
+          if (this.state.ranges.has(cidr)) {
+            this.showToast("این رنج قبلاً اضافه شده است.");
+          } else {
+            this.state.addRange(cidr, "custom");
+            this.elements.rangeInput.value = "";
+          }
+        } catch (e) {
+          this.showToast(`خطا: ${e.message}`);
+        }
+      }
+      handleRemoveRange() {
+        const selectedOption = this.elements.rangeList.selectedOptions[0];
+        if (selectedOption) {
+          const range = selectedOption.value;
+          const rangeData = this.state.ranges.get(range);
+          if (rangeData && rangeData.type === "default") {
+            this.showToast("نمی‌توان رنج پیشفرض را حذف کرد.");
+          } else {
+            this.state.removeRange(range);
+          }
+        } else {
+          this.showToast("لطفاً یک رنج برای حذف انتخاب کنید.");
+        }
+      }
+      async handleGenerate() {
+        const selectedOption = this.elements.rangeList.selectedOptions[0];
+        if (!selectedOption) {
+          this.showToast("لطفاً یک رنج را انتخاب کنید.");
+          return;
+        }
+        let count = parseInt(this.elements.countInput.value, 10);
+        if (isNaN(count) || count < 1) count = 1;
+        if (count > 100) {
+          this.showToast("حداکثر تعداد 100 می‌باشد.");
+          return;
+        }
+        this.showLoading();
+        try {
+          const ips = await Promise.all(
+            Array.from({ length: count }, () => this.generateIP(selectedOption.value))
+          );
+          const ipResult = ips.join("\n");
+          this.elements.result.value = ipResult;
+          this.state.addToHistory({
+            ip: ipResult,
+            range: selectedOption.value,
+            count,
+            timestamp: new Date()
           });
-          rand = BigInt("0x" + hex);
-        } while (rand >= max);
-        return rand;
-      }
-
-      function bigIntToIPv6(bigInt) {
-        let hex = bigInt.toString(16).padStart(32, "0");
-        const parts = [];
-        for (let i = 0; i < 32; i += 4) {
-          parts.push(hex.substr(i, 4));
-        }
-        return parts.join(":");
-      }
-
-      // ---------- کلاس UIManager برای رابط کلاسیک ----------
-      class UIManager {
-        constructor(version, prefix) {
-          this.version = version; // "IPv4" یا "IPv6"
-          this.prefix = prefix;   // "ipv4" یا "ipv6"
-          this.state = new IPState(20, this.version === "IPv4" ? "IPv4History" : "IPv6History");
-          this.setupElements();
-          this.setupEventListeners();
-          this.addDefaultRanges();
-        }
-        setupElements() {
-          this.elements = {
-            section: document.getElementById(`${this.prefix}-section`),
-            rangeInput: document.getElementById(`${this.prefix}-range-input`),
-            rangeList: document.getElementById(`${this.prefix}-range-list`),
-            countInput: document.getElementById(`${this.prefix}-count`),
-            result: document.getElementById(`${this.prefix}-result`),
-            history: document.getElementById(`${this.prefix}-history`),
-            loading: document.querySelector(`#${this.prefix}-section .loading`),
-            buttons: {
-              addRange: document.getElementById(`${this.prefix}-add-range`),
-              removeRange: document.getElementById(`${this.prefix}-remove-range`),
-              generate: document.getElementById(`${this.prefix}-generate`),
-              copy: document.getElementById(`${this.prefix}-copy`),
-              clearHistory: document.getElementById(`${this.prefix}-clear-history`),
-              downloadHistory: document.getElementById(`${this.prefix}-download-history`)
-            }
-          };
-        }
-        setupEventListeners() {
-          this.elements.buttons.addRange.addEventListener("click", () => this.handleAddRange());
-          this.elements.buttons.removeRange.addEventListener("click", () => this.handleRemoveRange());
-          this.elements.buttons.generate.addEventListener("click", () => this.handleGenerate());
-          this.elements.buttons.copy.addEventListener("click", () => this.handleCopy());
-          this.elements.buttons.clearHistory.addEventListener("click", () => this.handleClearHistory());
-          this.elements.buttons.downloadHistory.addEventListener("click", () => this.handleDownloadHistory());
-          this.state.addObserver((type) => this.updateUI(type));
-        }
-        addDefaultRanges() {
-          if (this.version === "IPv4") {
-            const defaults = [
-              "45.8.0.0/16",
-              "85.10.0.0/16",
-              "93.186.0.0/16",
-              "45.141.0.0/16",
-              "185.83.0.0/16",
-              "194.26.0.0/16",
-              "91.149.0.0/16",
-              "95.85.0.0/16",
-              "178.248.0.0/16",
-              "31.223.0.0/16",
-              "88.255.0.0/16",
-              "185.29.0.0/16",
-              "103.253.0.0/16",
-              "139.99.0.0/16",
-              "192.53.0.0/16"
-            ];
-            defaults.forEach(range => this.state.addRange(range, "default"));
-          } else {
-            const defaults = [
-              "2a01:4f8::/32",
-              "2a03:b0c0::/32",
-              "2a00:1450::/32",
-              "2a01:358::/32",
-              "2400:6180::/32"
-            ];
-            defaults.forEach(range => this.state.addRange(range, "default"));
-          }
-        }
-        async handleAddRange() {
-          const cidr = this.elements.rangeInput.value.trim();
-          if (!cidr) {
-            this.showToast("لطفاً یک CIDR معتبر وارد کنید.");
-            return;
-          }
-          try {
-            await this.validateRange(cidr);
-            if (this.state.ranges.has(cidr)) {
-              this.showToast("این رنج قبلاً اضافه شده است.");
-            } else {
-              this.state.addRange(cidr, "custom");
-              this.elements.rangeInput.value = "";
-            }
-          } catch (e) {
-            this.showToast(`خطا: ${e.message}`);
-          }
-        }
-        handleRemoveRange() {
-          const selectedOption = this.elements.rangeList.selectedOptions[0];
-          if (selectedOption) {
-            const range = selectedOption.value;
-            const rangeData = this.state.ranges.get(range);
-            if (rangeData && rangeData.type === "default") {
-              this.showToast("نمی‌توان رنج پیشفرض را حذف کرد.");
-            } else {
-              this.state.removeRange(range);
-            }
-          } else {
-            this.showToast("لطفاً یک رنج برای حذف انتخاب کنید.");
-          }
-        }
-        async handleGenerate() {
-          const selectedOption = this.elements.rangeList.selectedOptions[0];
-          if (!selectedOption) {
-            this.showToast("لطفاً یک رنج را انتخاب کنید.");
-            return;
-          }
-          let count = parseInt(this.elements.countInput.value, 10);
-          if (isNaN(count) || count < 1) count = 1;
-          if (count > 100) {
-            this.showToast("حداکثر تعداد 100 می‌باشد.");
-            return;
-          }
-          this.showLoading();
-          try {
-            const ips = await Promise.all(
-              Array.from({ length: count }, () => this.generateIP(selectedOption.value))
-            );
-            const ipResult = ips.join("\n");
-            this.elements.result.value = ipResult;
-            this.state.addToHistory({
-              ip: ipResult,
-              range: selectedOption.value,
-              count,
-              timestamp: new Date()
-            });
-          } catch (e) {
-            this.showToast(`خطا: ${e.message}`);
-          } finally {
-            this.hideLoading();
-          }
-        }
-        async handleCopy() {
-          try {
-            await navigator.clipboard.writeText(this.elements.result.value);
-            this.showToast("کپی شد!");
-          } catch (e) {
-            this.elements.result.select();
-            document.execCommand("copy");
-            this.showToast("کپی شد!");
-          }
-        }
-        handleClearHistory() {
-          if (confirm("آیا مطمئن هستید که می‌خواهید تاریخچه را پاک کنید؟")) {
-            this.state.clearHistory();
-          }
-        }
-        handleDownloadHistory() {
-          const historyText = this.state.history
-            .map(entry => `${new Date(entry.timestamp).toLocaleString()} - ${entry.range} (${entry.count}): ${entry.ip}`)
-            .join("\n");
-          const blob = new Blob([historyText], { type: "text/plain" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `${this.version}_history.txt`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }
-        showLoading() {
-          this.elements.loading.style.display = "flex";
-          Object.values(this.elements.buttons).forEach(btn => btn.disabled = true);
-        }
-        hideLoading() {
-          this.elements.loading.style.display = "none";
-          Object.values(this.elements.buttons).forEach(btn => btn.disabled = false);
-        }
-        showToast(message, duration = 3000) {
-          let toastEl = document.getElementById("toast");
-          toastEl.textContent = message;
-          toastEl.style.display = "block";
-          setTimeout(() => {
-            toastEl.style.display = "none";
-          }, duration);
-        }
-        updateUI(type) {
-          if (type === "ranges") {
-            this.updateRangeList();
-          } else if (type === "history") {
-            this.updateHistory();
-          }
-        }
-        updateRangeList() {
-          this.elements.rangeList.innerHTML = "";
-          this.state.ranges.forEach((data, range) => {
-            const option = document.createElement("option");
-            option.value = range;
-            option.textContent = range;
-            if (data.type === "custom") {
-              option.style.color = "blue";
-            }
-            this.elements.rangeList.appendChild(option);
-          });
-          if (this.elements.rangeList.options.length > 0) {
-            this.elements.rangeList.selectedIndex = 0;
-          }
-        }
-        updateHistory() {
-          this.elements.history.innerHTML = this.state.history
-            .map(entry => `<li>${entry.ip} (${entry.range}) - ${new Date(entry.timestamp).toLocaleString()}</li>`)
-            .join("");
-        }
-        async validateRange(cidr) {
-          const [ip, prefix] = cidr.split("/");
-          if (!ip || !prefix) {
-            throw new Error("CIDR باید شامل IP و طول پیشوند باشد.");
-          }
-          const prefixNum = parseInt(prefix, 10);
-          if (this.version === "IPv4") {
-            if (isNaN(prefixNum) || prefixNum < 0 || prefixNum > 32) {
-              throw new Error("طول پیشوند IPv4 باید بین 0 و 32 باشد.");
-            }
-            await IPUtils.ipv4ToInt(ip);
-          } else {
-            if (isNaN(prefixNum) || prefixNum < 0 || prefixNum > 128) {
-              throw new Error("طول پیشوند IPv6 باید بین 0 و 128 باشد.");
-            }
-            await IPUtils.expandIPv6Address(ip);
-          }
-        }
-        async generateIP(cidr) {
-          const [ip, prefix] = cidr.split("/");
-          const prefixNum = parseInt(prefix, 10);
-          if (this.version === "IPv4") {
-            const ipInt = await IPUtils.ipv4ToInt(ip);
-            const count = Math.pow(2, 32 - prefixNum);
-            const mask = prefixNum === 0 ? 0 : (0xFFFFFFFF << (32 - prefixNum)) >>> 0;
-            const network = ipInt & mask;
-            const randomOffset = Math.floor(Math.random() * count);
-            const randomIPInt = network + randomOffset;
-            return IPUtils.intToIPv4(randomIPInt);
-          } else {
-            const fullAddress = await IPUtils.expandIPv6Address(ip);
-            let ipBigInt = 0n;
-            for (let part of fullAddress) {
-              ipBigInt = (ipBigInt << 16n) + BigInt(parseInt(part, 16));
-            }
-            const hostBits = BigInt(128 - prefixNum);
-            const count = 1n << hostBits;
-            const mask = ((1n << 128n) - 1n) - ((1n << hostBits) - 1n);
-            const network = ipBigInt & mask;
-            const randomOffset = randomBigInt(count);
-            const randomIPBigInt = network + randomOffset;
-            return bigIntToIPv6(randomIPBigInt);
-          }
+        } catch (e) {
+          this.showToast(`خطا: ${e.message}`);
+        } finally {
+          this.hideLoading();
         }
       }
+      async handleCopy() {
+        try {
+          await navigator.clipboard.writeText(this.elements.result.value);
+          this.showToast("کپی شد!");
+        } catch (e) {
+          this.elements.result.select();
+          document.execCommand("copy");
+          this.showToast("کپی شد!");
+        }
+      }
+      handleClearHistory() {
+        if (confirm("آیا مطمئن هستید که می‌خواهید تاریخچه را پاک کنید؟")) {
+          this.state.clearHistory();
+        }
+      }
+      handleDownloadHistory() {
+        const historyText = this.state.history
+          .map(entry => `${new Date(entry.timestamp).toLocaleString()} - ${entry.range} (${entry.count}): ${entry.ip}`)
+          .join("\n");
+        const blob = new Blob([historyText], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${this.version}_history.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      showLoading() {
+        this.elements.loading.style.display = "flex";
+        Object.values(this.elements.buttons).forEach(btn => btn.disabled = true);
+      }
+      hideLoading() {
+        this.elements.loading.style.display = "none";
+        Object.values(this.elements.buttons).forEach(btn => btn.disabled = false);
+      }
+      showToast(message, duration = 3000) {
+        let toastEl = document.getElementById("toast");
+        toastEl.textContent = message;
+        toastEl.style.display = "block";
+        setTimeout(() => {
+          toastEl.style.display = "none";
+        }, duration);
+      }
+      updateUI(type) {
+        if (type === "ranges") {
+          this.updateRangeList();
+        } else if (type === "history") {
+          this.updateHistory();
+        }
+      }
+      updateRangeList() {
+        this.elements.rangeList.innerHTML = "";
+        this.state.ranges.forEach((data, range) => {
+          const option = document.createElement("option");
+          option.value = range;
+          option.textContent = range;
+          if (data.type === "custom") {
+            option.style.color = "blue";
+          }
+          this.elements.rangeList.appendChild(option);
+        });
+        if (this.elements.rangeList.options.length > 0) {
+          this.elements.rangeList.selectedIndex = 0;
+        }
+      }
+      updateHistory() {
+        this.elements.history.innerHTML = this.state.history
+          .map(entry => `<li>${entry.ip} (${entry.range}) - ${new Date(entry.timestamp).toLocaleString()}</li>`)
+          .join("");
+      }
+      async validateRange(cidr) {
+        const [ip, prefix] = cidr.split("/");
+        if (!ip || !prefix) {
+          throw new Error("CIDR باید شامل IP و طول پیشوند باشد.");
+        }
+        const prefixNum = parseInt(prefix, 10);
+        if (this.version === "IPv4") {
+          if (isNaN(prefixNum) || prefixNum < 0 || prefixNum > 32) {
+            throw new Error("طول پیشوند IPv4 باید بین 0 و 32 باشد.");
+          }
+          await IPUtils.ipv4ToInt(ip);
+        } else {
+          if (isNaN(prefixNum) || prefixNum < 0 || prefixNum > 128) {
+            throw new Error("طول پیشوند IPv6 باید بین 0 و 128 باشد.");
+          }
+          await IPUtils.expandIPv6Address(ip);
+        }
+      }
+      async generateIP(cidr) {
+        const [ip, prefix] = cidr.split("/");
+        const prefixNum = parseInt(prefix, 10);
+        if (this.version === "IPv4") {
+          const ipInt = await IPUtils.ipv4ToInt(ip);
+          const count = Math.pow(2, 32 - prefixNum);
+          const mask = prefixNum === 0 ? 0 : (0xFFFFFFFF << (32 - prefixNum)) >>> 0;
+          const network = ipInt & mask;
+          const randomOffset = Math.floor(Math.random() * count);
+          const randomIPInt = network + randomOffset;
+          return IPUtils.intToIPv4(randomIPInt);
+        } else {
+          const fullAddress = await IPUtils.expandIPv6Address(ip);
+          let ipBigInt = 0n;
+          for (let part of fullAddress) {
+            ipBigInt = (ipBigInt << 16n) + BigInt(parseInt(part, 16));
+          }
+          const hostBits = BigInt(128 - prefixNum);
+          const count = 1n << hostBits;
+          const mask = ((1n << 128n) - 1n) - ((1n << hostBits) - 1n);
+          const network = ipBigInt & mask;
+          const randomOffset = randomBigInt(count);
+          const randomIPBigInt = network + randomOffset;
+          return bigIntToIPv6(randomIPBigInt);
+        }
+      }
+    }
 
-      // ---------- کلاس CountryLookupManager ----------
-      class CountryLookupManager {
-        constructor(prefix) {
-          this.prefix = prefix; // "ip-country"
-          this.setupElements();
-          this.setupEventListeners();
+    // ---------- کلاس CountryLookupManager ----------
+    class CountryLookupManager {
+      constructor(prefix) {
+        this.prefix = prefix; // "ip-country"
+        this.setupElements();
+        this.setupEventListeners();
+      }
+      setupElements() {
+        this.section = document.getElementById(`${this.prefix}-section`);
+        this.loading = this.section.querySelector(".loading");
+        this.input = document.getElementById(`${this.prefix}-input`) || document.getElementById("ip-country-input");
+        this.lookupButton = document.getElementById(`${this.prefix}-lookup`) || document.getElementById("ip-country-lookup");
+        this.result = document.getElementById(`${this.prefix}-result`) || document.getElementById("ip-country-result");
+        this.copyButton = document.getElementById(`${this.prefix}-copy`) || document.getElementById("ip-country-copy");
+        this.progressContainer = this.section.querySelector(".progress-container");
+        this.progressBar = this.section.querySelector(".progress-bar");
+      }
+      setupEventListeners() {
+        this.lookupButton.addEventListener("click", () => this.handleLookup());
+        this.copyButton.addEventListener("click", () => this.handleCopy());
+      }
+      resetProgress() {
+        if (this.progressBar) {
+          this.progressBar.style.width = "0%";
         }
-        setupElements() {
-          this.section = document.getElementById(`${this.prefix}-section`);
-          this.loading = this.section.querySelector(".loading");
-          this.input = document.getElementById(`${this.prefix}-input`) || document.getElementById("ip-country-input");
-          this.lookupButton = document.getElementById(`${this.prefix}-lookup`) || document.getElementById("ip-country-lookup");
-          this.result = document.getElementById(`${this.prefix}-result`) || document.getElementById("ip-country-result");
-          this.copyButton = document.getElementById(`${this.prefix}-copy`) || document.getElementById("ip-country-copy");
-          this.progressContainer = this.section.querySelector(".progress-container");
-          this.progressBar = this.section.querySelector(".progress-bar");
+      }
+      setProgress(percentage) {
+        if (this.progressBar) {
+          this.progressBar.style.width = `${percentage}%`;
         }
-        setupEventListeners() {
-          this.lookupButton.addEventListener("click", () => this.handleLookup());
-          this.copyButton.addEventListener("click", () => this.handleCopy());
+      }
+      async handleLookup() {
+        const ip = this.input.value.trim();
+        if (!ip) {
+          this.showToast("لطفاً یک آدرس IP وارد کنید.");
+          return;
         }
-        resetProgress() {
-          if (this.progressBar) {
-            this.progressBar.style.width = "0%";
+        this.resetProgress();
+        this.showLoading();
+        const duration = 3000;
+        const intervalTime = 100;
+        const steps = duration / intervalTime;
+        let currentStep = 0;
+        const intervalId = setInterval(() => {
+          currentStep++;
+          const percentage = (currentStep / steps) * 100;
+          this.setProgress(percentage);
+          if (currentStep >= steps) {
+            clearInterval(intervalId);
+            this.doLookup(ip);
           }
-        }
-        setProgress(percentage) {
-          if (this.progressBar) {
-            this.progressBar.style.width = `${percentage}%`;
+        }, intervalTime);
+      }
+      async doLookup(ip) {
+        try {
+          const data = await this.lookupCountry(ip);
+          if (data.error) {
+            throw new Error(data.error);
           }
-        }
-        async handleLookup() {
-          const ip = this.input.value.trim();
-          if (!ip) {
-            this.showToast("لطفاً یک آدرس IP وارد کنید.");
-            return;
-          }
-          this.resetProgress();
-          this.showLoading();
-          const duration = 3000;
-          const intervalTime = 100;
-          const steps = duration / intervalTime;
-          let currentStep = 0;
-          const intervalId = setInterval(() => {
-            currentStep++;
-            const percentage = (currentStep / steps) * 100;
-            this.setProgress(percentage);
-            if (currentStep >= steps) {
-              clearInterval(intervalId);
-              this.doLookup(ip);
-            }
-          }, intervalTime);
-        }
-        async doLookup(ip) {
-          try {
-            const data = await this.lookupCountry(ip);
-            if (data.error) {
-              throw new Error(data.error);
-            }
-            const resultText = `آدرس: ${data.ip}
+          const resultText = `آدرس: ${data.ip}
 شماره IP: ${data.ip_number || "نامشخص"}
 نسخه: IPv${data.ip_version || "نامشخص"}
 کشور: ${data.country_name || "نامشخص"} (${data.country_code2 || data.country_code || "نامشخص"})
 ISP: ${data.isp || "نامشخص"}`;
-            this.result.value = resultText;
-          } catch (e) {
-            this.showToast(`خطا: ${e.message}`);
-          } finally {
-            this.hideLoading();
-          }
-        }
-        async lookupCountry(ip) {
-          const url = `https://api.iplocation.net/?cmd=ip-country&ip=${ip}&format=json`;
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
-          }
-          const data = await response.json();
-          return data;
-        }
-        async handleCopy() {
-          try {
-            await navigator.clipboard.writeText(this.result.value);
-            this.showToast("کپی شد!");
-          } catch (e) {
-            this.result.select();
-            document.execCommand("copy");
-            this.showToast("کپی شد!");
-          }
-        }
-        showLoading() {
-          this.loading.style.display = "flex";
-          this.lookupButton.disabled = true;
-          this.copyButton.disabled = true;
-        }
-        hideLoading() {
-          this.loading.style.display = "none";
-          this.lookupButton.disabled = false;
-          this.copyButton.disabled = false;
-        }
-        showToast(message, duration = 3000) {
-          let toastEl = document.getElementById("toast");
-          toastEl.textContent = message;
-          toastEl.style.display = "block";
-          setTimeout(() => {
-            toastEl.style.display = "none";
-          }, duration);
+          this.result.value = resultText;
+        } catch (e) {
+          this.showToast(`خطا: ${e.message}`);
+        } finally {
+          this.hideLoading();
         }
       }
+      async lookupCountry(ip) {
+        const url = `https://api.iplocation.net/?cmd=ip-country&ip=${ip}&format=json`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+      }
+      async handleCopy() {
+        try {
+          await navigator.clipboard.writeText(this.result.value);
+          this.showToast("کپی شد!");
+        } catch (e) {
+          this.result.select();
+          document.execCommand("copy");
+          this.showToast("کپی شد!");
+        }
+      }
+      showLoading() {
+        this.loading.style.display = "flex";
+        this.lookupButton.disabled = true;
+        this.copyButton.disabled = true;
+      }
+      hideLoading() {
+        this.loading.style.display = "none";
+        this.lookupButton.disabled = false;
+        this.copyButton.disabled = false;
+      }
+      showToast(message, duration = 3000) {
+        let toastEl = document.getElementById("toast");
+        toastEl.textContent = message;
+        toastEl.style.display = "block";
+        setTimeout(() => {
+          toastEl.style.display = "none";
+        }, duration);
+      }
+    }
 
-      // ---------- ورود و اعتبارسنجی کاربر با پشتیبانی از انواع زمان اعتبار ----------
-      document.addEventListener("DOMContentLoaded", () => {
-        const now = new Date();
-        // تعریف کاربران نمونه:
-        // - expiration: "lifetime" برای همیشه معتبر؛
-        // - عدد (به روز) برای محاسبه تاریخ انقضا از زمان ایجاد (created)؛
-        // - رشته‌ای به فرمت شمسی (مثلاً "22/11/1403") برای تبدیل به تاریخ میلادی.
-        const validUsers = [
-          { username: "amir", password: "amir", userId: "1", expiration: "lifetime", created: now },
-          { username: "user30", password: "pass30", userId: "user30", expiration: 30, created: new Date(now.getTime() - 20 * 24 * 60 * 60 * 1000) },
-          { username: "user60", password: "pass60", userId: "user60", expiration: 60, created: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000) },
-          { username: "user90", password: "pass90", userId: "user90", expiration: 90, created: new Date(now.getTime() - 91 * 24 * 60 * 60 * 1000) }, // منقضی (91 روز از ایجاد > 90 روز)
-          { username: "user120", password: "pass120", userId: "user120", expiration: 120, created: new Date(now.getTime() - 100 * 24 * 60 * 60 * 1000) },
-        //   { username: "jalali", password: "jalalipass", userId: "44444", expiration: "22/11/1403", created: new Date(2023, 0, 1) }
-        ];
+    // ---------- ورود و اعتبارسنجی کاربر به همراه لودینگ 3 ثانیه ----------
+    document.addEventListener("DOMContentLoaded", () => {
+      const now = new Date();
+      // تعریف کاربران نمونه:
+      // - expiration: "lifetime" برای همیشه معتبر؛
+      // - عدد (به روز) برای محاسبه تاریخ انقضا از زمان ایجاد؛
+      // - رشته‌ای به فرمت شمسی (مثلاً "22/11/1403") برای تبدیل به تاریخ میلادی.
+      const validUsers = [
+        { username: "amir", password: "amir", userId: "1", expiration: "lifetime", created: now },
+        { username: "user30", password: "pass30", userId: "user30", expiration: 30, created: new Date(now.getTime() - 20 * 24 * 60 * 60 * 1000) },
+        { username: "user60", password: "pass60", userId: "user60", expiration: 60, created: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000) },
+        { username: "user90", password: "pass90", userId: "user90", expiration: 90, created: new Date(now.getTime() - 91 * 24 * 60 * 60 * 1000) },
+        { username: "user120", password: "pass120", userId: "user120", expiration: 120, created: new Date(now.getTime() - 100 * 24 * 60 * 60 * 1000) }
+        // مثال دیگر با تاریخ شمسی:
+        // { username: "jalali", password: "jalalipass", userId: "44444", expiration: "22/11/1403", created: new Date(2023, 0, 1) }
+      ];
 
-        const loginForm = document.getElementById("login-form");
-        loginForm.addEventListener("submit", (e) => {
-          e.preventDefault();
-          const username = document.getElementById("username").value.trim();
-          const password = document.getElementById("password").value.trim();
-          const userId = document.getElementById("userId").value.trim();
-          const user = validUsers.find(u => u.username === username && u.password === password && u.userId === userId);
-          if (user) {
-            let expired = false;
-            if (user.expiration === "lifetime") {
-              expired = false;
-            } else if (typeof user.expiration === "number") {
-              // محاسبه تاریخ انقضا بر اساس تعداد روز از تاریخ ایجاد
-              let expDate = new Date(user.created.getTime() + user.expiration * 24 * 60 * 60 * 1000);
-              if (new Date() > expDate) {
-                expired = true;
-              }
-            } else if (typeof user.expiration === "string") {
-              let expDate = parseJalaliDate(user.expiration);
-              if (!expDate || new Date() > expDate) {
-                expired = true;
-              }
+      const loginForm = document.getElementById("login-form");
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const userId = document.getElementById("userId").value.trim();
+        const user = validUsers.find(u => u.username === username && u.password === password && u.userId === userId);
+
+        if (user) {
+          let expired = false;
+          if (user.expiration === "lifetime") {
+            expired = false;
+          } else if (typeof user.expiration === "number") {
+            let expDate = new Date(user.created.getTime() + user.expiration * 24 * 60 * 60 * 1000);
+            if (new Date() > expDate) {
+              expired = true;
             }
-            if (expired) {
-              document.getElementById("login-error").textContent = "اعتبار کاربر منقضی شده است.";
-              document.getElementById("login-error").style.display = "block";
-            } else {
+          } else if (typeof user.expiration === "string") {
+            let expDate = parseJalaliDate(user.expiration);
+            if (!expDate || new Date() > expDate) {
+              expired = true;
+            }
+          }
+          if (expired) {
+            document.getElementById("login-error").textContent = "اعتبار کاربر منقضی شده است.";
+            document.getElementById("login-error").style.display = "block";
+          } else {
+            // ورود موفق: مخفی کردن فرم و نمایش لودینگ ورود به مدت 3 ثانیه
+            document.getElementById("login-error").style.display = "none";
+            loginForm.style.display = "none";
+            const loginLoading = document.getElementById("login-loading");
+            loginLoading.style.display = "flex";
+
+            setTimeout(() => {
               document.getElementById("login-page").style.display = "none";
               document.getElementById("main-page").style.display = "block";
-            }
-          } else {
-            document.getElementById("login-error").textContent = "اعتبارسنجی ناموفق";
-            document.getElementById("login-error").style.display = "block";
+            }, 3000);
           }
-        });
-
-        // راه‌اندازی رابط‌های IPv4، IPv6 و تشخیص کشور IP
-        new UIManager("IPv4", "ipv4");
-        new UIManager("IPv6", "ipv6");
-        new CountryLookupManager("ip-country");
+        } else {
+          document.getElementById("login-error").textContent = "اعتبارسنجی ناموفق";
+          document.getElementById("login-error").style.display = "block";
+        }
       });
-    </script>
+
+      // راه‌اندازی رابط‌های IPv4، IPv6 و تشخیص کشور IP
+      new UIManager("IPv4", "ipv4");
+      new UIManager("IPv6", "ipv6");
+      new CountryLookupManager("ip-country");
+    });
+  </script>
 </body>
 
 </html>
