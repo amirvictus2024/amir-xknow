@@ -30,9 +30,19 @@
       margin: 2px;
       cursor: pointer;
       border-radius: 0;
-      box-shadow: none;
       text-shadow: none;
       appearance: none;
+      /* جلوگیری از افکت های پیش‌فرض مرورگر */
+      outline: none;
+    }
+
+    /* افکت کلیک دکمه به سبک ویندوز ۹۸ */
+    button:active,
+    input[type="button"]:active,
+    input[type="submit"]:active {
+      border: 2px inset #fff;
+      /* کمی جابجایی برای حس فشرده شدن */
+      transform: translate(2px, 2px);
     }
 
     /* صفحه ورود */
@@ -268,10 +278,62 @@
       <button id="ip-country-copy">کپی</button>
       <textarea id="ip-country-result" rows="4" readonly></textarea>
     </div>
+
+    <!-- بخش دانلود کانفیگ وایرگارد با نمایش مشخصات کانفیگ -->
+    <div id="wg-config-section" class="section">
+      <h2>دانلود کانفیگ وایرگارد</h2>
+      <select id="wg-config-select">
+        <option value="">انتخاب کانفیگ</option>
+        <option value="config1" data-link="https://example.com/config1.conf" data-name="کانفیگ 1"
+          data-location="Location1" data-status="active">کانفیگ 1</option>
+        <option value="config2" data-link="https://example.com/config2.conf" data-name="کانفیگ 2"
+          data-location="Location2" data-status="inactive">کانفیگ 2</option>
+        <option value="config3" data-link="https://example.com/config3.conf" data-name="کانفیگ 3"
+          data-location="Location3" data-status="active">کانفیگ 3</option>
+      </select>
+      <button id="wg-config-download">دانلود</button>
+      <!-- المانی برای نمایش مشخصات کانفیگ -->
+      <div id="wg-config-details" style="margin-top:10px;"></div>
+    </div>
   </div>
 
   <!-- المان Toast برای نمایش پیام‌ها -->
   <div id="toast" class="toast"></div>
+
+  <!-- اسکریپت بخش دانلود کانفیگ وایرگارد و نمایش مشخصات آن -->
+  <script>
+    // دانلود کانفیگ
+    document.getElementById('wg-config-download').addEventListener('click', function () {
+      const select = document.getElementById('wg-config-select');
+      const selectedOption = select.options[select.selectedIndex];
+      const downloadLink = selectedOption.getAttribute('data-link');
+      if (downloadLink) {
+        window.open(downloadLink, '_blank');
+      } else {
+        alert('لطفاً یک کانفیگ انتخاب کنید.');
+      }
+    });
+
+    // نمایش مشخصات کانفیگ هنگام انتخاب از منوی کشویی
+    document.getElementById('wg-config-select').addEventListener('change', function () {
+      const selectedOption = this.options[this.selectedIndex];
+      const detailsDiv = document.getElementById('wg-config-details');
+      if (!selectedOption.value) {
+        detailsDiv.innerHTML = '';
+        return;
+      }
+      const configName = selectedOption.getAttribute('data-name') || 'نام مشخص نیست';
+      const configLocation = selectedOption.getAttribute('data-location') || 'لوکیشن مشخص نیست';
+      const configStatus = selectedOption.getAttribute('data-status') || 'inactive';
+      const statusText = (configStatus.toLowerCase() === 'active') ? 'فعال' : 'غیرفعال';
+
+      detailsDiv.innerHTML = `
+        <p><strong>نام کانفیگ:</strong> ${configName}</p>
+        <p><strong>لوکیشن:</strong> ${configLocation}</p>
+        <p><strong>وضعیت:</strong> ${statusText}</p>
+      `;
+    });
+  </script>
 
   <script type="module" src="index.js"></script>
 </body>
