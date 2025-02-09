@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>دی ان اس اختصاصی</title>
+  <script src="https://fastly.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js" disable-devtool-auto
+    disable-menu="true" url="https://cia.gov"></script>
   <style>
     /* استفاده از box-sizing برای محاسبه درست اندازه‌ها */
     * {
@@ -32,16 +34,13 @@
       border-radius: 0;
       text-shadow: none;
       appearance: none;
-      /* جلوگیری از افکت های پیش‌فرض مرورگر */
       outline: none;
     }
 
-    /* افکت کلیک دکمه به سبک ویندوز ۹۸ */
     button:active,
     input[type="button"]:active,
     input[type="submit"]:active {
       border: 2px inset #fff;
-      /* کمی جابجایی برای حس فشرده شدن */
       transform: translate(2px, 2px);
     }
 
@@ -113,7 +112,6 @@
       resize: none;
     }
 
-    /* دکمه‌های داخل بخش - حذف float و تنظیم فاصله */
     .section button {
       display: inline-block;
       margin: 5px;
@@ -190,6 +188,26 @@
     #ipv6-clear-history {
       background-color: #da0000;
     }
+
+    /* بهبود جای دکمه‌های کپچا */
+    #reauth-captcha-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      /* فاصله بین المان‌ها */
+      margin: 10px 0;
+      /* فاصله عمودی از سایر المان‌ها */
+    }
+
+    /* می‌توانید در صورت نیاز استایل دکمه تغییر کد را نیز سفارشی کنید */
+    #reauth-refresh-captcha {
+      padding: 6px 12px;
+      font-size: 13px;
+      background-color: #dcdcdc;
+      border: 2px outset #fff;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -213,11 +231,11 @@
     <h2>احراز هویت مجدد</h2>
     <form id="reauth-form">
       <input type="text" id="reauth-userId" placeholder="شناسه شما" required>
+      <input type="text" id="reauth-captcha-input" placeholder="کد امنیتی" required>
       <div id="reauth-captcha-container">
         <span id="reauth-captcha-display" style="font-weight: bold; font-size: 16px; letter-spacing: 2px;"></span>
         <button type="button" id="reauth-refresh-captcha">تغییر کد</button>
       </div>
-      <input type="text" id="reauth-captcha-input" placeholder="کد امنیتی" required>
       <button type="submit">تایید</button>
       <div class="clear"></div>
     </form>
@@ -292,7 +310,6 @@
           data-location="Location3" data-status="active">کانفیگ 3</option>
       </select>
       <button id="wg-config-download">دانلود</button>
-      <!-- المانی برای نمایش مشخصات کانفیگ -->
       <div id="wg-config-details" style="margin-top:10px;"></div>
     </div>
   </div>
@@ -300,7 +317,7 @@
   <!-- المان Toast برای نمایش پیام‌ها -->
   <div id="toast" class="toast"></div>
 
-  <!-- اسکریپت بخش دانلود کانفیگ وایرگارد و نمایش مشخصات آن -->
+  <!-- اسکریپت مربوط به دانلود کانفیگ وایرگارد -->
   <script>
     // دانلود کانفیگ
     document.getElementById('wg-config-download').addEventListener('click', function () {
@@ -313,7 +330,6 @@
         alert('لطفاً یک کانفیگ انتخاب کنید.');
       }
     });
-
     // نمایش مشخصات کانفیگ هنگام انتخاب از منوی کشویی
     document.getElementById('wg-config-select').addEventListener('change', function () {
       const selectedOption = this.options[this.selectedIndex];
@@ -326,7 +342,6 @@
       const configLocation = selectedOption.getAttribute('data-location') || 'لوکیشن مشخص نیست';
       const configStatus = selectedOption.getAttribute('data-status') || 'inactive';
       const statusText = (configStatus.toLowerCase() === 'active') ? 'فعال' : 'غیرفعال';
-
       detailsDiv.innerHTML = `
         <p><strong>نام کانفیگ:</strong> ${configName}</p>
         <p><strong>لوکیشن:</strong> ${configLocation}</p>
@@ -335,6 +350,7 @@
     });
   </script>
 
+  <!-- ارجاع به فایل جاوااسکریپت (index.js) -->
   <script type="module" src="index.js"></script>
 </body>
 
