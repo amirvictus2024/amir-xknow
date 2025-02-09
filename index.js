@@ -17,17 +17,6 @@ function regenerateReauthCaptcha() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    // توابع کمکی برای تولید آدرس IPv6 سرور گیمینگ
-    function getRandomHexBlock() {
-        return Math.floor(Math.random() * 0x10000).toString(16).padStart(4, '0');
-    }
-    async function generateGamingIPv6() {
-        const part1 = getRandomHexBlock();
-        const part2 = getRandomHexBlock();
-        return `3505:aa93:aa02:${part1}:${part2}::1`;
-    }
-
     /******** بررسی وضعیت ورود (با استفاده از sessionStorage) ********/
     const loggedInUser = sessionStorage.getItem("loggedInUser");
     if (loggedInUser) {
@@ -65,12 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function jalaliToJDN(jy, jm, jd) {
         const epbase = jy - (jy >= 0 ? 474 : 473);
         const epyear = 474 + (epbase % 2820);
-        return jd +
-            (jm <= 7 ? (jm - 1) * 31 : ((jm - 1) * 30) + 6) +
+        return (
+            jd +
+            (jm <= 7 ? (jm - 1) * 31 : (jm - 1) * 30 + 6) +
             Math.floor((epyear * 682 - 110) / 2816) +
             (epyear - 1) * 365 +
             Math.floor(epbase / 2820) * 1029983 +
-            (1948320 - 1);
+            (1948320 - 1)
+        );
     }
     function d2g(jdn) {
         let j = 4 * jdn + 139361631;
@@ -150,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             this.observers.add(observer);
         }
         notifyObservers(type) {
-            this.observers.forEach(observer => observer(type));
+            this.observers.forEach((observer) => observer(type));
         }
     }
     class IPUtils {
@@ -159,7 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
         static async ipv4ToInt(ip) {
             if (this.ipv4Cache.has(ip)) return this.ipv4Cache.get(ip);
             const parts = ip.split(".");
-            if (parts.length !== 4) throw new Error("آدرس IPv4 نامعتبر است.");
+            if (parts.length !== 4)
+                throw new Error("آدرس IPv4 نامعتبر است.");
             let result = 0;
             for (let i = 0; i < 4; i++) {
                 const part = parseInt(parts[i], 10);
@@ -176,13 +168,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 (num >>> 24) & 0xff,
                 (num >>> 16) & 0xff,
                 (num >>> 8) & 0xff,
-                num & 0xff
+                num & 0xff,
             ].join(".");
         }
         static async expandIPv6Address(address) {
             if (this.ipv6Cache.has(address)) return this.ipv6Cache.get(address);
             const parts = address.split("::");
-            if (parts.length > 2) throw new Error("آدرس IPv6 نامعتبر است.");
+            if (parts.length > 2)
+                throw new Error("آدرس IPv6 نامعتبر است.");
             const head = parts[0] ? parts[0].split(":") : [];
             const tail = parts[1] ? parts[1].split(":") : [];
             const missing = 8 - (head.length + tail.length);
@@ -190,8 +183,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const fullAddress = [
                 ...head,
                 ...Array(missing).fill("0"),
-                ...tail
-            ].map(part => part.padStart(4, "0"));
+                ...tail,
+            ].map((part) => part.padStart(4, "0"));
             this.ipv6Cache.set(address, fullAddress);
             return fullAddress;
         }
@@ -204,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const randomBytes = new Uint8Array(bytes);
             window.crypto.getRandomValues(randomBytes);
             let hex = "";
-            randomBytes.forEach(byte => {
+            randomBytes.forEach((byte) => {
                 hex += byte.toString(16).padStart(2, "0");
             });
             rand = BigInt("0x" + hex);
@@ -220,15 +213,18 @@ document.addEventListener("DOMContentLoaded", () => {
         return parts.join(":");
     }
 
-    /******** کلاس UIManager برای رابط کلاسیک ********/
+    /******** کلاس UIManager برای رابط کاربری ********/
     class UIManager {
         constructor(version, prefix) {
             this.version = version; // "IPv4" یا "IPv6"
-            this.prefix = prefix;   // "ipv4" یا "ipv6"
-            this.state = new IPState(20, this.version === "IPv4" ? "IPv4History" : "IPv6History");
+            this.prefix = prefix; // "ipv4" یا "ipv6"
+            this.state = new IPState(
+                20,
+                this.version === "IPv4" ? "IPv4History" : "IPv6History"
+            );
             if (this.version === "IPv4") {
                 this.locationMapping = {
-                    "Location1": [
+                    Location1: [
                         "84.128.0.0/10",
                         "87.128.0.0/10",
                         "91.0.0.0/10",
@@ -289,15 +285,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         "87.128.240.0/20",
                         "80.154.144.0/20",
                         "87.138.32.0/20",
-
                     ],
-                    "Location2": ["85.10.0.0/16",],
-                    "Location3": ["93.186.0.0/16",],
-                    "سرور گیمینگ": ["185.97.16.0/22"]
+                    Location2: ["85.10.0.0/16"],
+                    Location3: ["93.186.0.0/16"],
+                    "سرور گیمینگ": ["185.97.16.0/22"],
                 };
             } else {
                 this.locationMapping = {
-                    "Location1": [
+                    Location1: [
                         "2605:b740:100::/41",
                         "2605:3c80:e7a::/47",
                         "2605:3c80:e7c::/46",
@@ -310,17 +305,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         "2003:e4:a800::/37",
                         "2003:e4:b000::/36",
                         "2003:e4:c000::/34",
-                        "2003:e5::/35",
                         "2003:e5:2000::/36",
                         "2003:e5:3000::/37",
                         "2003:e5:3800::/38",
                         "2003:e5:3c00::/39",
                         "2003:e5:3e00::/40",
-                        "2003:e5:3f00::/43"
+                        "2003:e5:3f00::/43",
                     ],
-                    "Location2": ["2a03:b0c0::/32",],
-                    "Location3": ["2a00:1450::/32",],
-                    "سرور گیمینگ": { type: "gaming", generate: generateGamingIPv6 }
+                    Location2: ["2a03:b0c0::/32"],
+                    Location3: ["2a00:1450::/32"],
+                    "سرور گیمینگ": { type: "gaming", generate: generateGamingIPv6 },
                 };
             }
             this.setupElements();
@@ -338,8 +332,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     generate: document.getElementById(`${this.prefix}-generate`),
                     copy: document.getElementById(`${this.prefix}-copy`),
                     clearHistory: document.getElementById(`${this.prefix}-clear-history`),
-                    downloadHistory: document.getElementById(`${this.prefix}-download-history`)
-                }
+                    downloadHistory: document.getElementById(`${this.prefix}-download-history`),
+                },
             };
         }
         setupEventListeners() {
@@ -374,7 +368,11 @@ document.addEventListener("DOMContentLoaded", () => {
             this.showLoading();
             try {
                 let ips;
-                if (this.version === "IPv6" && typeof mappingValue === "object" && mappingValue.type === "gaming") {
+                if (
+                    this.version === "IPv6" &&
+                    typeof mappingValue === "object" &&
+                    mappingValue.type === "gaming"
+                ) {
                     ips = await Promise.all(
                         Array.from({ length: count }, () => mappingValue.generate())
                     );
@@ -383,7 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         location: selectedLocation,
                         range: "3505:aa93:aa02:****:****::/64",
                         count,
-                        timestamp: new Date()
+                        timestamp: new Date(),
                     });
                 } else {
                     ips = await Promise.all(
@@ -394,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         location: selectedLocation,
                         range: mappingValue,
                         count,
-                        timestamp: new Date()
+                        timestamp: new Date(),
                     });
                 }
                 this.elements.result.value = ips.join("\n");
@@ -421,7 +419,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         handleDownloadHistory() {
             const historyText = this.state.history
-                .map(entry => `${new Date(entry.timestamp).toLocaleString()} - ${entry.location} (${entry.range}) (${entry.count}): ${entry.ip}`)
+                .map(
+                    (entry) =>
+                        `${new Date(entry.timestamp).toLocaleString()} - ${entry.location} (${entry.range}) (${entry.count}): ${entry.ip}`
+                )
                 .join("\n");
             const blob = new Blob([historyText], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
@@ -435,11 +436,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         showLoading() {
             this.elements.loading.style.display = "flex";
-            Object.values(this.elements.buttons).forEach(btn => btn.disabled = true);
+            Object.values(this.elements.buttons).forEach((btn) => (btn.disabled = true));
         }
         hideLoading() {
             this.elements.loading.style.display = "none";
-            Object.values(this.elements.buttons).forEach(btn => btn.disabled = false);
+            Object.values(this.elements.buttons).forEach((btn) => (btn.disabled = false));
         }
         showToast(message, duration = 3000) {
             const toastEl = document.getElementById("toast");
@@ -458,11 +459,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         updateHistory() {
             this.elements.history.innerHTML = this.state.history
-                .map(entry => `<li>${entry.ip} (${entry.location} - ${entry.range}) - ${new Date(entry.timestamp).toLocaleString()}</li>`)
+                .map(
+                    (entry) =>
+                        `<li>${entry.ip} (${entry.location} - ${entry.range}) - ${new Date(
+                            entry.timestamp
+                        ).toLocaleString()}</li>`
+                )
                 .join("");
         }
         async generateIP(cidr) {
-            const [ip, prefix] = cidr.split("/");
+            // اگر cidr یک آرایه باشد، یک مقدار تصادفی از آن انتخاب می‌شود
+            if (Array.isArray(cidr)) {
+                cidr = cidr[Math.floor(Math.random() * cidr.length)];
+            }
+            if (typeof cidr !== "string") {
+                throw new Error("cidr باید یک رشته یا آرایه‌ای از رشته‌ها باشد.");
+            }
+            const parts = cidr.split("/");
+            if (parts.length !== 2) {
+                throw new Error("cidr نامعتبر است. فرمت صحیح: ip/prefix");
+            }
+            const [ip, prefix] = parts;
             const prefixNum = parseInt(prefix, 10);
             if (this.version === "IPv4") {
                 const ipInt = await IPUtils.ipv4ToInt(ip);
@@ -489,6 +506,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    /******** تابع تولید آدرس IPv6 سرور گیمینگ ********/
+    async function generateGamingIPv6() {
+        function getRandomHexBlock() {
+            return Math.floor(Math.random() * 0x10000)
+                .toString(16)
+                .padStart(4, "0");
+        }
+        const part1 = getRandomHexBlock();
+        const part2 = getRandomHexBlock();
+        return `3505:aa93:aa02:${part1}:${part2}::1`;
+    }
+
     /******** کلاس CountryLookupManager ********/
     class CountryLookupManager {
         constructor(prefix) {
@@ -499,10 +528,18 @@ document.addEventListener("DOMContentLoaded", () => {
         setupElements() {
             this.section = document.getElementById(`${this.prefix}-section`);
             this.loading = this.section.querySelector(".loading");
-            this.input = document.getElementById(`${this.prefix}-input`) || document.getElementById("ip-country-input");
-            this.lookupButton = document.getElementById(`${this.prefix}-lookup`) || document.getElementById("ip-country-lookup");
-            this.result = document.getElementById(`${this.prefix}-result`) || document.getElementById("ip-country-result");
-            this.copyButton = document.getElementById(`${this.prefix}-copy`) || document.getElementById("ip-country-copy");
+            this.input =
+                document.getElementById(`${this.prefix}-input`) ||
+                document.getElementById("ip-country-input");
+            this.lookupButton =
+                document.getElementById(`${this.prefix}-lookup`) ||
+                document.getElementById("ip-country-lookup");
+            this.result =
+                document.getElementById(`${this.prefix}-result`) ||
+                document.getElementById("ip-country-result");
+            this.copyButton =
+                document.getElementById(`${this.prefix}-copy`) ||
+                document.getElementById("ip-country-copy");
             this.progressContainer = this.section.querySelector(".progress-container");
             this.progressBar = this.section.querySelector(".progress-bar");
         }
@@ -607,7 +644,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { username: "user30", password: "pass30", userId: "user30", expiration: 30, created: new Date(new Date().getTime() - 20 * 24 * 60 * 60 * 1000) },
         { username: "user60", password: "pass60", userId: "user60", expiration: 60, created: new Date(new Date().getTime() - 10 * 24 * 60 * 60 * 1000) },
         { username: "user90", password: "pass90", userId: "user90", expiration: 90, created: new Date(new Date().getTime() - 91 * 24 * 60 * 60 * 1000) },
-        { username: "user120", password: "pass120", userId: "user120", expiration: 120, created: new Date(new Date().getTime() - 100 * 24 * 60 * 60 * 1000) }
+        { username: "user120", password: "pass120", userId: "user120", expiration: 120, created: new Date(new Date().getTime() - 100 * 24 * 60 * 60 * 1000) },
     ];
     const loginForm = document.getElementById("login-form");
     loginForm.addEventListener("submit", (e) => {
@@ -615,7 +652,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value.trim();
         const userId = document.getElementById("userId").value.trim();
-        const user = validUsers.find(u => u.username === username && u.password === password && u.userId === userId);
+        const user = validUsers.find(
+            (u) => u.username === username && u.password === password && u.userId === userId
+        );
         if (user) {
             let expired = false;
             if (user.expiration !== "lifetime") {
@@ -629,9 +668,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("login-error").style.display = "block";
             } else {
                 document.getElementById("login-error").style.display = "none";
-                // ثبت کاربر وارد شده در sessionStorage
                 sessionStorage.setItem("loggedInUser", user.userId);
-                // نمایش انیمیشن بارگذاری ورود
                 loginForm.style.display = "none";
                 const loginLoading = document.getElementById("login-loading");
                 loginLoading.style.display = "flex";
