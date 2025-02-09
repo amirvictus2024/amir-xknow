@@ -224,6 +224,7 @@
         <option value="Location1">Location1</option>
         <option value="Location2">Location2</option>
         <option value="Location3">Location3</option>
+        <option value="سرور گیمینگ">Gaming server1</option>
       </select>
       <input type="number" id="ipv4-count" placeholder="تعداد" min="1" max="100">
       <textarea id="ipv4-result" rows="4" class="ltr-output" readonly></textarea>
@@ -243,6 +244,7 @@
         <option value="Location1">Location1</option>
         <option value="Location2">Location2</option>
         <option value="Location3">Location3</option>
+        <option value="سرور گیمینگ">Gaming server1</option>
       </select>
       <input type="number" id="ipv6-count" placeholder="تعداد" min="1" max="100">
       <textarea id="ipv6-result" rows="4" class="ltr-output" readonly></textarea>
@@ -291,6 +293,17 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+
+      // توابع کمکی برای تولید آدرس IPv6 سرور گیمینگ
+      function getRandomHexBlock() {
+        return Math.floor(Math.random() * 0x10000).toString(16).padStart(4, '0');
+      }
+      async function generateGamingIPv6() {
+        const part1 = getRandomHexBlock();
+        const part2 = getRandomHexBlock();
+        return `3505:aa93:aa02:${part1}:${part2}::1`;
+      }
+
       /******** بررسی وضعیت ورود (با استفاده از sessionStorage) ********/
       const loggedInUser = sessionStorage.getItem("loggedInUser");
       if (loggedInUser) {
@@ -493,13 +506,15 @@
             this.locationMapping = {
               "Location1": "45.8.0.0/16",
               "Location2": "85.10.0.0/16",
-              "Location3": "93.186.0.0/16"
+              "Location3": "93.186.0.0/16",
+              "سرور گیمینگ": "185.97.16.0/22"
             };
           } else {
             this.locationMapping = {
               "Location1": "2a01:4f8::/32",
               "Location2": "2a03:b0c0::/32",
-              "Location3": "2a00:1450::/32"
+              "Location3": "2a00:1450::/32",
+              "سرور گیمینگ": { type: "gaming", generate: generateGamingIPv6 }
             };
           }
           this.setupElements();
@@ -539,8 +554,8 @@
             this.showToast("لطفاً یک لوکیشن انتخاب کنید.");
             return;
           }
-          const cidr = this.locationMapping[selectedLocation];
-          if (!cidr) {
+          const mappingValue = this.locationMapping[selectedLocation];
+          if (!mappingValue) {
             this.showToast("رنج مربوط به این لوکیشن یافت نشد.");
             return;
           }
@@ -552,18 +567,31 @@
           }
           this.showLoading();
           try {
-            const ips = await Promise.all(
-              Array.from({ length: count }, () => this.generateIP(cidr))
-            );
-            const ipResult = ips.join("\n");
-            this.elements.result.value = ipResult;
-            this.state.addToHistory({
-              ip: ipResult,
-              location: selectedLocation,
-              range: cidr,
-              count,
-              timestamp: new Date()
-            });
+            let ips;
+            if (this.version === "IPv6" && typeof mappingValue === "object" && mappingValue.type === "gaming") {
+              ips = await Promise.all(
+                Array.from({ length: count }, () => mappingValue.generate())
+              );
+              this.state.addToHistory({
+                ip: ips.join("\n"),
+                location: selectedLocation,
+                range: "3505:aa93:aa02:****:****::/64",
+                count,
+                timestamp: new Date()
+              });
+            } else {
+              ips = await Promise.all(
+                Array.from({ length: count }, () => this.generateIP(mappingValue))
+              );
+              this.state.addToHistory({
+                ip: ips.join("\n"),
+                location: selectedLocation,
+                range: mappingValue,
+                count,
+                timestamp: new Date()
+              });
+            }
+            this.elements.result.value = ips.join("\n");
           } catch (e) {
             this.showToast(`خطا: ${e.message}`);
           } finally {
