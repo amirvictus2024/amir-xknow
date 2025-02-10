@@ -208,6 +208,24 @@
       border: 2px outset #fff;
       cursor: pointer;
     }
+
+    .win98-button {
+      display: inline-block;
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 13px;
+      background-color: #dcdcdc;
+      border: 2px outset #fff;
+      padding: 9px 18px;
+      margin: 20px;
+      text-decoration: none;
+      color: #000;
+      cursor: pointer;
+    }
+
+    .win98-button:active {
+      border: 2px inset #fff;
+      transform: translate(2px, 2px);
+    }
   </style>
 </head>
 
@@ -224,6 +242,8 @@
     </form>
     <div id="login-loading">در حال بارگذاری...</div>
     <div id="login-error" style="color:red; display:none;">اعتبارسنجی ناموفق</div>
+    <!-- می‌توانید این لینک را در هر جایی از صفحه اصلی خود قرار دهید -->
+    <a href="subscription.html" target="_blank" class="win98-button">خرید اشتراک سایت</a>
   </div>
 
   <!-- فرم احراز هویت مجدد -->
@@ -254,7 +274,7 @@
         <option value="Location3">Location3</option>
         <option value="سرور گیمینگ">Gaming server1</option>
       </select>
-      <input type="number" id="ipv4-count" placeholder="تعداد" min="1" max="100">
+      <input type="number" id="ipv4-count" placeholder="تعداد 1 تا 5" min="1" max="5">
       <textarea id="ipv4-result" rows="4" class="ltr-output" readonly></textarea>
       <div class="loading">در حال پردازش...</div>
       <button id="ipv4-generate">تولید</button>
@@ -274,7 +294,7 @@
         <option value="Location3">Location3</option>
         <option value="سرور گیمینگ">Gaming server1</option>
       </select>
-      <input type="number" id="ipv6-count" placeholder="تعداد" min="1" max="100">
+      <input type="number" id="ipv6-count" placeholder="تعداد 1 تا 5" min="1" max="5">
       <textarea id="ipv6-result" rows="4" class="ltr-output" readonly></textarea>
       <div class="loading">در حال پردازش...</div>
       <button id="ipv6-generate">تولید</button>
