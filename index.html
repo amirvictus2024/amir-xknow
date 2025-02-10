@@ -2,444 +2,484 @@
 <html lang="fa" dir="rtl">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>دی ان اس اختصاصی</title>
-  <script src="https://fastly.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js" disable-devtool-auto
-    disable-menu="true" url="https://cia.gov"></script>
-  <style>
-    /* استفاده از box-sizing برای محاسبه درست اندازه‌ها */
-    * {
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دی ان اس اختصاصی</title>
+    <script src="https://fastly.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js" disable-devtool-auto
+        disable-menu="true" url="https://cia.gov"></script>
+    <style>
+        /* استفاده از box-sizing برای محاسبه درست اندازه‌ها */
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      background: #008080;
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+        body {
+            background: #008080;
+            font-family: "MS Sans Serif", Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-    /* استایل دکمه‌ها به سبک ویندوز ۹۸ */
-    button,
-    input[type="button"],
-    input[type="submit"] {
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 13px;
-      background-color: #dcdcdc;
-      border: 2px outset #fff;
-      padding: 9px 18px;
-      margin: 2px;
-      cursor: pointer;
-      border-radius: 0;
-      text-shadow: none;
-      appearance: none;
-      outline: none;
-    }
+        /* استایل دکمه‌ها به سبک ویندوز ۹۸ */
+        button,
+        input[type="button"],
+        input[type="submit"] {
+            font-family: "MS Sans Serif", Tahoma, sans-serif;
+            font-size: 13px;
+            background-color: #dcdcdc;
+            border: 2px outset #fff;
+            padding: 9px 18px;
+            margin: 2px;
+            cursor: pointer;
+            border-radius: 0;
+            text-shadow: none;
+            appearance: none;
+            outline: none;
+        }
 
-    button:active,
-    input[type="button"]:active,
-    input[type="submit"]:active {
-      border: 2px inset #fff;
-      transform: translate(2px, 2px);
-    }
+        button:active,
+        input[type="button"]:active,
+        input[type="submit"]:active {
+            border: 2px inset #fff;
+            transform: translate(2px, 2px);
+        }
 
-    /* صفحه ورود */
-    .login-container {
-      width: 400px;
-      margin: 50px auto;
-      background: #c0c0c0;
-      padding: 20px;
-      border: 2px inset #fff;
-      text-align: center;
-    }
+        /* صفحه ورود */
+        .login-container {
+            width: 400px;
+            margin: 50px auto;
+            background: #c0c0c0;
+            padding: 20px;
+            border: 2px inset #fff;
+            text-align: center;
+        }
 
-    .login-container input {
-      width: 100%;
-      padding: 5px;
-      margin: 5px 0;
-      border: 2px inset #fff;
-      background: #fff;
-    }
+        .login-container input {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 2px inset #fff;
+            background: #fff;
+        }
 
-    /* المان لودینگ ورود */
-    #login-loading {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
-      background: #f0f0f0;
-      border: 2px inset #fff;
-      margin-top: 10px;
-    }
+        /* المان لودینگ ورود */
+        #login-loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background: #f0f0f0;
+            border: 2px inset #fff;
+            margin-top: 10px;
+        }
 
-    .clear {
-      clear: both;
-    }
+        .clear {
+            clear: both;
+        }
 
-    /* بخش اصلی (صفحه اصلی) */
-    #main-page {
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 10px;
-    }
+        /* بخش اصلی (صفحه اصلی) */
+        #main-page {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 10px;
+        }
 
-    /* استایل بخش‌های رابط کاربری (section) */
-    .section {
-      margin-bottom: 20px;
-      padding: 10px;
-      background: #dcdcdc;
-      border: 2px outset #fff;
-      text-align: right;
-    }
+        /* استایل بخش‌های رابط کاربری (section) */
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #dcdcdc;
+            border: 2px outset #fff;
+            text-align: right;
+        }
 
-    .section h2 {
-      margin-top: 0;
-    }
+        .section h2 {
+            margin-top: 0;
+        }
 
-    .section select,
-    .section input,
-    .section textarea {
-      display: block;
-      width: 100%;
-      padding: 5px;
-      margin: 5px 0;
-      border: 2px inset #fff;
-      background: #fff;
-    }
+        .section select,
+        .section input,
+        .section textarea {
+            display: block;
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 2px inset #fff;
+            background: #fff;
+        }
 
-    .section textarea {
-      resize: none;
-    }
+        .section textarea {
+            resize: none;
+        }
 
-    .section button {
-      display: inline-block;
-      margin: 5px;
-    }
+        .section button {
+            display: inline-block;
+            margin: 5px;
+        }
 
-    .loading {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 5px;
-      background: #f0f0f0;
-      border: 2px inset #fff;
-      margin-bottom: 5px;
-      text-align: center;
-    }
+        .loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            background: #f0f0f0;
+            border: 2px inset #fff;
+            margin-bottom: 5px;
+            text-align: center;
+        }
 
-    .toast {
-      position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #ffffe0;
-      border: 2px outset #fff;
-      padding: 5px 10px;
-      display: none;
-      z-index: 1000;
-    }
+        .toast {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffe0;
+            border: 2px outset #fff;
+            padding: 5px 10px;
+            display: none;
+            z-index: 1000;
+        }
 
-    .history-list {
-      list-style: none;
-      padding: 0;
-      margin: 10px 0 0 0;
-      max-height: 100px;
-      overflow-y: auto;
-      background: #fff;
-      border: 2px inset #fff;
-    }
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+            max-height: 100px;
+            overflow-y: auto;
+            background: #fff;
+            border: 2px inset #fff;
+        }
 
-    .progress-container {
-      width: 100%;
-      background: #fff;
-      border: 2px inset #fff;
-      height: 20px;
-      margin: 5px 0;
-    }
+        .progress-container {
+            width: 100%;
+            background: #fff;
+            border: 2px inset #fff;
+            height: 20px;
+            margin: 5px 0;
+        }
 
-    .progress-bar {
-      height: 100%;
-      background: #000080;
-      width: 0%;
-    }
+        .progress-bar {
+            height: 100%;
+            background: #000080;
+            width: 0%;
+        }
 
-    /* خروجی تولید IP به صورت LTR */
-    .ltr-output {
-      direction: ltr;
-      text-align: left;
-    }
+        /* خروجی تولید IP به صورت LTR */
+        .ltr-output {
+            direction: ltr;
+            text-align: left;
+        }
 
-    /* ریسپانسیو */
-    @media screen and (max-width: 800px) {
-      #main-page {
-        width: 95%;
-        margin: 10px auto;
-      }
+        /* ریسپانسیو */
+        @media screen and (max-width: 800px) {
+            #main-page {
+                width: 95%;
+                margin: 10px auto;
+            }
 
-      .login-container {
-        width: 95%;
-        margin: 10px auto;
-      }
-    }
+            .login-container {
+                width: 95%;
+                margin: 10px auto;
+            }
+        }
 
-    /* دکمه‌های پاک کردن تاریخچه با رنگ قرمز */
-    #ipv4-clear-history,
-    #ipv6-clear-history {
-      background-color: #da0000;
-    }
+        /* دکمه‌های پاک کردن تاریخچه با رنگ قرمز */
+        #ipv4-clear-history,
+        #ipv6-clear-history {
+            background-color: #da0000;
+        }
 
-    /* بهبود جای دکمه‌های کپچا */
-    #reauth-captcha-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      /* فاصله بین المان‌ها */
-      margin: 10px 0;
-      /* فاصله عمودی از سایر المان‌ها */
-    }
+        /* بهبود جای دکمه‌های کپچا */
+        #reauth-captcha-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
 
-    /* می‌توانید در صورت نیاز استایل دکمه تغییر کد را نیز سفارشی کنید */
-    #reauth-refresh-captcha {
-      padding: 6px 12px;
-      font-size: 13px;
-      background-color: #dcdcdc;
-      border: 2px outset #fff;
-      cursor: pointer;
-    }
+        /* استایل دکمه تغییر کد کپچا */
+        #reauth-refresh-captcha {
+            padding: 6px 12px;
+            font-size: 13px;
+            background-color: #dcdcdc;
+            border: 2px outset #fff;
+            cursor: pointer;
+        }
 
-    .win98-button {
-      display: inline-block;
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 13px;
-      background-color: #dcdcdc;
-      border: 2px outset #fff;
-      padding: 9px 18px;
-      margin: 20px;
-      text-decoration: none;
-      color: #000;
-      cursor: pointer;
-    }
+        .win98-button {
+            display: inline-block;
+            font-family: "MS Sans Serif", Tahoma, sans-serif;
+            font-size: 13px;
+            background-color: #dcdcdc;
+            border: 2px outset #fff;
+            padding: 9px 18px;
+            margin: 20px;
+            text-decoration: none;
+            color: #000;
+            cursor: pointer;
+        }
 
-    .win98-button:active {
-      border: 2px inset #fff;
-      transform: translate(2px, 2px);
-    }
-  </style>
+        .win98-button:active {
+            border: 2px inset #fff;
+            transform: translate(2px, 2px);
+        }
+
+        #appearance-switch {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #dcdcdc;
+            border: 2px outset #fff;
+            cursor: pointer;
+        }
+
+        /* استایل پنجره دیالوگ به سبک ویندوز 98 */
+        .dialog {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            border: 2px solid #000;
+            background: #c0c0c0;
+            font-family: "MS Sans Serif", sans-serif;
+            box-shadow: 2px 2px 0 #fff;
+            z-index: 1000;
+        }
+
+        .dialog-header {
+            background: #000080;
+            color: white;
+            padding: 2px 4px;
+            font-weight: bold;
+            border-bottom: 2px solid #fff;
+        }
+
+        .dialog-body {
+            padding: 10px;
+            color: black;
+        }
+
+        .dialog-footer {
+            text-align: right;
+            padding: 4px;
+        }
+
+        .dialog-footer button {
+            font-family: "MS Sans Serif", sans-serif;
+            border: 2px outset #fff;
+            background: #dcdcdc;
+            padding: 2px 10px;
+            cursor: pointer;
+        }
+
+        /* استایل پوشاننده (Overlay) برای ایجاد حالت مودال */
+        .overlay {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 900;
+        }
+    </style>
 </head>
 
 <body>
-  <!-- فرم ورود اصلی -->
-  <div id="login-page" class="login-container">
-    <h2>ورود به سیستم</h2>
-    <form id="login-form">
-      <input type="text" id="username" placeholder="نام کاربری" required>
-      <input type="password" id="password" placeholder="رمز عبور" required>
-      <input type="text" id="userId" placeholder="شناسه شما" required>
-      <button type="submit">ورود</button>
-      <div class="clear"></div>
-    </form>
-    <div id="login-loading">در حال بارگذاری...</div>
-    <div id="login-error" style="color:red; display:none;">اعتبارسنجی ناموفق</div>
-    <!-- می‌توانید این لینک را در هر جایی از صفحه اصلی خود قرار دهید -->
-    <a href="subscription.html" target="_blank" class="win98-button">خرید اشتراک سایت</a>
-  </div>
-
-  <!-- فرم احراز هویت مجدد -->
-  <div id="reauth-page" class="login-container" style="display:none;">
-    <h2>احراز هویت مجدد</h2>
-    <form id="reauth-form">
-      <input type="text" id="reauth-userId" placeholder="شناسه شما" required>
-      <input type="text" id="reauth-captcha-input" placeholder="کد امنیتی" required>
-      <div id="reauth-captcha-container">
-        <span id="reauth-captcha-display" style="font-weight: bold; font-size: 16px; letter-spacing: 2px;"></span>
-        <button type="button" id="reauth-refresh-captcha">تغییر کد</button>
-      </div>
-      <button type="submit">تایید</button>
-      <div class="clear"></div>
-    </form>
-    <div id="reauth-error" style="color:red; display:none;">احراز هویت ناموفق</div>
-  </div>
-
-  <!-- صفحه اصلی (رابط کاربری کلاسیک) -->
-  <div id="main-page" style="display: none;">
-    <header
-      style="display: flex; justify-content: space-between; align-items: center; background: #c0c0c0; padding: 10px; border-bottom: 2px outset #fff;">
-      <button id="appearance-switch"
-        style="font-size: 16px; padding: 10px 20px; background-color: #dcdcdc; border: 2px outset #fff; cursor: pointer;">ظاهر
-        جدید</button>
-      <a href="video.html" target="_blank">
-        <button
-          style="font-size: 16px; padding: 10px 20px; background-color: #dcdcdc; border: 2px outset #fff; cursor: pointer;">ویدیو
-          آموزشی</button>
-      </a>
-    </header>
-    <!-- بخش تولید IPv4 -->
-    <div id="ipv4-section" class="section">
-      <h2>تولید IPv4</h2>
-      <select id="ipv4-location-select">
-        <option value="">انتخاب لوکیشن</option>
-        <option value="Location1">Location1</option>
-        <option value="Location2">Location2</option>
-        <option value="Location3">Location3</option>
-        <option value="سرور گیمینگ">Gaming server1</option>
-      </select>
-      <input type="number" id="ipv4-count" placeholder="تعداد 1 تا 5" min="1" max="5">
-      <textarea id="ipv4-result" rows="4" class="ltr-output" readonly></textarea>
-      <div class="loading">در حال پردازش...</div>
-      <button id="ipv4-generate">تولید</button>
-      <button id="ipv4-copy">کپی</button>
-      <button id="ipv4-clear-history">پاک کردن تاریخچه</button>
-      <button id="ipv4-download-history">دانلود تاریخچه</button>
-      <ul id="ipv4-history" class="history-list"></ul>
+    <!-- فرم ورود اصلی -->
+    <div id="login-page" class="login-container">
+        <h2>ورود به سیستم</h2>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="نام کاربری" required>
+            <input type="password" id="password" placeholder="رمز عبور" required>
+            <input type="text" id="userId" placeholder="شناسه شما" required>
+            <button type="submit">ورود</button>
+            <div class="clear"></div>
+        </form>
+        <div id="login-loading">در حال بارگذاری...</div>
+        <div id="login-error" style="color:red; display:none;">اعتبارسنجی ناموفق</div>
+        <!-- لینک خرید اشتراک -->
+        <a href="subscription.html" target="_blank" class="win98-button">خرید اشتراک سایت</a>
     </div>
 
-    <!-- بخش تولید IPv6 -->
-    <div id="ipv6-section" class="section">
-      <h2>تولید IPv6</h2>
-      <select id="ipv6-location-select">
-        <option value="">انتخاب لوکیشن</option>
-        <option value="Location1">Location1</option>
-        <option value="Location2">Location2</option>
-        <option value="Location3">Location3</option>
-        <option value="سرور گیمینگ">Gaming server1</option>
-      </select>
-      <input type="number" id="ipv6-count" placeholder="تعداد 1 تا 5" min="1" max="5">
-      <textarea id="ipv6-result" rows="4" class="ltr-output" readonly></textarea>
-      <div class="loading">در حال پردازش...</div>
-      <button id="ipv6-generate">تولید</button>
-      <button id="ipv6-copy">کپی</button>
-      <button id="ipv6-clear-history">پاک کردن تاریخچه</button>
-      <button id="ipv6-download-history">دانلود تاریخچه</button>
-      <ul id="ipv6-history" class="history-list"></ul>
+    <!-- فرم احراز هویت مجدد -->
+    <div id="reauth-page" class="login-container" style="display:none;">
+        <h2>احراز هویت مجدد</h2>
+        <form id="reauth-form">
+            <input type="text" id="reauth-userId" placeholder="شناسه شما" required>
+            <input type="text" id="reauth-captcha-input" placeholder="کد امنیتی" required>
+            <div id="reauth-captcha-container">
+                <span id="reauth-captcha-display"
+                    style="font-weight: bold; font-size: 16px; letter-spacing: 2px;"></span>
+                <button type="button" id="reauth-refresh-captcha">تغییر کد</button>
+            </div>
+            <button type="submit">تایید</button>
+            <div class="clear"></div>
+        </form>
+        <div id="reauth-error" style="color:red; display:none;">احراز هویت ناموفق</div>
     </div>
 
-    <!-- بخش تشخیص کشور IP -->
-    <div id="ip-country-section" class="section">
-      <h2>تشخیص کشور IP</h2>
-      <input type="text" id="ip-country-input" placeholder="آدرس IP">
-      <div class="loading">در حال پردازش...</div>
-      <div class="progress-container">
-        <div class="progress-bar"></div>
-      </div>
-      <button id="ip-country-lookup">جستجو</button>
-      <button id="ip-country-copy">کپی</button>
-      <textarea id="ip-country-result" rows="4" readonly></textarea>
+    <!-- صفحه اصلی (رابط کاربری کلاسیک) -->
+    <div id="main-page" style="display: none;">
+        <header
+            style="display: flex; justify-content: space-between; align-items: center; background: #c0c0c0; padding: 10px; border-bottom: 2px outset #fff;">
+            <!-- دکمه تغییر ظاهر (در اینجا با کلیک، دیالوگ خطا نمایش داده می‌شود) -->
+            <button id="appearance-switch">ظاهر جدید</button>
+            <a href="video.html" target="_blank">
+                <button
+                    style="font-size: 16px; padding: 10px 20px; background-color: #dcdcdc; border: 2px outset #fff; cursor: pointer;">
+                    ویدیو آموزشی
+                </button>
+            </a>
+        </header>
+
+        <!-- بخش تولید IPv4 -->
+        <div id="ipv4-section" class="section">
+            <h2>تولید IPv4</h2>
+            <select id="ipv4-location-select">
+                <option value="">انتخاب لوکیشن</option>
+                <option value="Location1">Location1</option>
+                <option value="Location2">Location2</option>
+                <option value="Location3">Location3</option>
+                <option value="سرور گیمینگ">Gaming server1</option>
+            </select>
+            <input type="number" id="ipv4-count" placeholder="تعداد 1 تا 5" min="1" max="5">
+            <textarea id="ipv4-result" rows="4" class="ltr-output" readonly></textarea>
+            <div class="loading">در حال پردازش...</div>
+            <button id="ipv4-generate">تولید</button>
+            <button id="ipv4-copy">کپی</button>
+            <button id="ipv4-clear-history">پاک کردن تاریخچه</button>
+            <button id="ipv4-download-history">دانلود تاریخچه</button>
+            <ul id="ipv4-history" class="history-list"></ul>
+        </div>
+
+        <!-- بخش تولید IPv6 -->
+        <div id="ipv6-section" class="section">
+            <h2>تولید IPv6</h2>
+            <select id="ipv6-location-select">
+                <option value="">انتخاب لوکیشن</option>
+                <option value="Location1">Location1</option>
+                <option value="Location2">Location2</option>
+                <option value="Location3">Location3</option>
+                <option value="سرور گیمینگ">Gaming server1</option>
+            </select>
+            <input type="number" id="ipv6-count" placeholder="تعداد 1 تا 5" min="1" max="5">
+            <textarea id="ipv6-result" rows="4" class="ltr-output" readonly></textarea>
+            <div class="loading">در حال پردازش...</div>
+            <button id="ipv6-generate">تولید</button>
+            <button id="ipv6-copy">کپی</button>
+            <button id="ipv6-clear-history">پاک کردن تاریخچه</button>
+            <button id="ipv6-download-history">دانلود تاریخچه</button>
+            <ul id="ipv6-history" class="history-list"></ul>
+        </div>
+
+        <!-- بخش تشخیص کشور IP -->
+        <div id="ip-country-section" class="section">
+            <h2>تشخیص کشور IP</h2>
+            <input type="text" id="ip-country-input" placeholder="آدرس IP">
+            <div class="loading">در حال پردازش...</div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+            <button id="ip-country-lookup">جستجو</button>
+            <button id="ip-country-copy">کپی</button>
+            <textarea id="ip-country-result" rows="4" readonly></textarea>
+        </div>
+
+        <!-- بخش دانلود کانفیگ وایرگارد -->
+        <div id="wg-config-section" class="section">
+            <h2>دانلود کانفیگ وایرگارد</h2>
+            <select id="wg-config-select">
+                <option value="">انتخاب کانفیگ</option>
+                <option value="config1"
+                    data-link="https://e.pcloud.link/publink/show?code=XZdlOKZhOL6sKBcXbVKyNyhWtvi9uJV8txy"
+                    data-name="کانفیگ شماره 1" data-location="سرور 1-آلمان 1" data-status="active">کانفیگ 1</option>
+                <option value="config2" data-link="https://example.com/config2.conf" data-name="کانفیگ 2"
+                    data-location="Location2" data-status="inactive">کانفیگ 2</option>
+                <option value="config3" data-link="https://example.com/config3.conf" data-name="کانفیگ 3"
+                    data-location="Location3" data-status="active">کانفیگ 3</option>
+            </select>
+            <button id="wg-config-download">دانلود</button>
+            <div id="wg-config-details" style="margin-top:10px;"></div>
+        </div>
     </div>
 
-    <!-- بخش دانلود کانفیگ وایرگارد با نمایش مشخصات کانفیگ -->
-    <div id="wg-config-section" class="section">
-      <h2>دانلود کانفیگ وایرگارد</h2>
-      <select id="wg-config-select">
-        <option value="">انتخاب کانفیگ</option>
-        <option value="config1" data-link="https://e.pcloud.link/publink/show?code=XZdlOKZhOL6sKBcXbVKyNyhWtvi9uJV8txy"
-          data-name="کانفیگ شماره 1" data-location="سرور 1-آلمان 1" data-status="active">کانفیگ 1</option>
-        <option value="config2" data-link="https://example.com/config2.conf" data-name="کانفیگ 2"
-          data-location="Location2" data-status="inactive">کانفیگ 2</option>
-        <option value="config3" data-link="https://example.com/config3.conf" data-name="کانفیگ 3"
-          data-location="Location3" data-status="active">کانفیگ 3</option>
-      </select>
-      <button id="wg-config-download">دانلود</button>
-      <div id="wg-config-details" style="margin-top:10px;"></div>
+    <!-- المان Toast برای نمایش پیام‌ها -->
+    <div id="toast" class="toast"></div>
+
+    <!-- پوشاننده (Overlay) برای حالت مودال -->
+    <div id="overlay" class="overlay" style="display: none;"></div>
+
+    <!-- پنجره خطا (دیالوگ) -->
+    <div id="error-dialog" class="dialog" style="display: none;">
+        <div class="dialog-header">خطا</div>
+        <div class="dialog-body">بزودی در دسترس قرار می‌گیرد</div>
+        <div class="dialog-footer">
+            <button id="error-ok-button">تأیید</button>
+        </div>
     </div>
-  </div>
 
-  <!-- المان Toast برای نمایش پیام‌ها -->
-  <div id="toast" class="toast"></div>
+    <!-- اسکریپت‌های جاوااسکریپت -->
+    <script>
+        // وقتی روی دکمه "ظاهر جدید" کلیک می‌شود، پوشاننده و دیالوگ خطا نمایش داده می‌شوند
+        document.addEventListener('DOMContentLoaded', function () {
+            const appearanceBtn = document.getElementById('appearance-switch');
+            if (appearanceBtn) {
+                appearanceBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.getElementById('overlay').style.display = 'block';
+                    document.getElementById('error-dialog').style.display = 'block';
+                });
+            }
 
-  <!-- اسکریپت مربوط به تغییر ظاهر -->
-  <script>
-    // تابع ایجاد انیمیشن بلوپ (Blop) و هدایت به صفحه جدید
-    function switchAppearance(newPageUrl) {
-      // ایجاد یک عنصر پوشان (overlay)
-      const overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.top = '50%';
-      overlay.style.left = '50%';
-      overlay.style.transform = 'translate(-50%, -50%) scale(0)';
-      overlay.style.width = '20px';
-      overlay.style.height = '20px';
-      overlay.style.backgroundColor = '#0078d7'; // رنگ اصلی یا آکنت سایت
-      overlay.style.borderRadius = '50%';
-      overlay.style.zIndex = '9999';
-      overlay.style.transition = 'transform 0.6s ease-out, width 0.6s ease-out, height 0.6s ease-out';
-      document.body.appendChild(overlay);
-
-      // اجرای reflow (ضروری است)
-      overlay.offsetHeight;
-
-      // محاسبه بزرگ‌ترین قطر (برای پوشش کامل صفحه)
-      const maxDimension = Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2) * 2;
-
-      // انیمیشن تغییر اندازه و مقیاس
-      overlay.style.transform = 'translate(-50%, -50%) scale(1)';
-      overlay.style.width = maxDimension + 'px';
-      overlay.style.height = maxDimension + 'px';
-
-      // پس از پایان انیمیشن هدایت به صفحه جدید
-      overlay.addEventListener('transitionend', function () {
-        window.location.href = newPageUrl;
-      });
-    }
-
-    // رویداد کلیک دکمه تغییر ظاهر
-    document.addEventListener('DOMContentLoaded', function () {
-      const appearanceBtn = document.getElementById('appearance-switch');
-      if (appearanceBtn) {
-        appearanceBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          // تشخیص صفحه فعلی و تعیین URL صفحه جدید:
-          let currentPath = window.location.pathname.toLowerCase();
-          let newPageUrl = "";
-          if (currentPath.includes("subscription") || currentPath.includes("sub")) {
-            newPageUrl = "new-sub.html";
-          } else if (currentPath.includes("video")) {
-            newPageUrl = "new-video.html";
-          } else {
-            newPageUrl = "new.html";
-          }
-          switchAppearance(newPageUrl);
+            // رویداد بسته شدن دیالوگ خطا
+            const errorOkBtn = document.getElementById('error-ok-button');
+            if (errorOkBtn) {
+                errorOkBtn.addEventListener('click', function () {
+                    document.getElementById('overlay').style.display = 'none';
+                    document.getElementById('error-dialog').style.display = 'none';
+                });
+            }
         });
-      }
-    });
-  </script>
+    </script>
 
-  <!-- اسکریپت مربوط به دانلود کانفیگ وایرگارد -->
-  <script>
-    // دانلود کانفیگ
-    document.getElementById('wg-config-download').addEventListener('click', function () {
-      const select = document.getElementById('wg-config-select');
-      const selectedOption = select.options[select.selectedIndex];
-      const downloadLink = selectedOption.getAttribute('data-link');
-      if (downloadLink) {
-        window.open(downloadLink, '_blank');
-      } else {
-        alert('لطفاً یک کانفیگ انتخاب کنید.');
-      }
-    });
-    // نمایش مشخصات کانفیگ هنگام انتخاب از منوی کشویی
-    document.getElementById('wg-config-select').addEventListener('change', function () {
-      const selectedOption = this.options[this.selectedIndex];
-      const detailsDiv = document.getElementById('wg-config-details');
-      if (!selectedOption.value) {
-        detailsDiv.innerHTML = '';
-        return;
-      }
-      const configName = selectedOption.getAttribute('data-name') || 'نام مشخص نیست';
-      const configLocation = selectedOption.getAttribute('data-location') || 'لوکیشن مشخص نیست';
-      const configStatus = selectedOption.getAttribute('data-status') || 'inactive';
-      const statusText = (configStatus.toLowerCase() === 'active') ? 'فعال' : 'غیرفعال';
-      detailsDiv.innerHTML = `
+    <!-- اسکریپت مربوط به دانلود کانفیگ وایرگارد -->
+    <script>
+        // دانلود کانفیگ وایرگارد
+        document.getElementById('wg-config-download').addEventListener('click', function () {
+            const select = document.getElementById('wg-config-select');
+            const selectedOption = select.options[select.selectedIndex];
+            const downloadLink = selectedOption.getAttribute('data-link');
+            if (downloadLink) {
+                window.open(downloadLink, '_blank');
+            } else {
+                alert('لطفاً یک کانفیگ انتخاب کنید.');
+            }
+        });
+
+        // نمایش مشخصات کانفیگ هنگام انتخاب از منوی کشویی
+        document.getElementById('wg-config-select').addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const detailsDiv = document.getElementById('wg-config-details');
+            if (!selectedOption.value) {
+                detailsDiv.innerHTML = '';
+                return;
+            }
+            const configName = selectedOption.getAttribute('data-name') || 'نام مشخص نیست';
+            const configLocation = selectedOption.getAttribute('data-location') || 'لوکیشن مشخص نیست';
+            const configStatus = selectedOption.getAttribute('data-status') || 'inactive';
+            const statusText = (configStatus.toLowerCase() === 'active') ? 'فعال' : 'غیرفعال';
+            detailsDiv.innerHTML = `
         <p><strong>نام کانفیگ:</strong> ${configName}</p>
         <p><strong>لوکیشن:</strong> ${configLocation}</p>
         <p><strong>وضعیت:</strong> ${statusText}</p>
       `;
-    });
-  </script>
+        });
+    </script>
 
-  <!-- ارجاع به فایل جاوااسکریپت (index.js) -->
-  <script type="module" src="index.js"></script>
+    <!-- ارجاع به فایل جاوااسکریپت (index.js) در صورت نیاز -->
+    <script type="module" src="index.js"></script>
 </body>
 
 </html>
