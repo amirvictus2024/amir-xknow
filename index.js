@@ -693,7 +693,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /******** ورود و اعتبارسنجی کاربر ********/
     const validUsers = [
-        { username: "1", password: "1", userId: "1", expiration: "lifetime", created: new Date() },
+        { username: "amir", password: "amir", userId: "1", expiration: "lifetime", created: new Date() },
         // نمونه‌های دیگر در صورت نیاز
         // { username: "user30", password: "pass30", userId: "user30", expiration: 30, created: new Date(new Date().getTime() - 20 * 24 * 60 * 60 * 1000) },
         // { username: "user60", password: "pass60", userId: "user60", expiration: 60, created: new Date(new Date().getTime() - 10 * 24 * 60 * 60 * 1000) },
