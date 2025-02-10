@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خرید اشتراک سایت</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background: #008080;
+            direction: rtl;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 30px auto;
+            background: #fff;
+            border: 2px outset #ccc;
+            padding: 20px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        h2,
+        h3 {
+            text-align: center;
+        }
+
+        .card-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #fffae6;
+            border: 2px outset #ccc;
+            text-align: center;
+        }
+
+        .card-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .card-details .top-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            width: 250px;
+            text-align: center;
+        }
+
+        button {
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .card-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 2px inset #ccc;
+            font-size: 14px;
+        }
+
+        input[readonly] {
+            background: #e9e9e9;
+            cursor: pointer;
+        }
+
+        #subscription-price {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* پس‌زمینه ناحیه نتیجه از سبز به زرد تغییر یافته است */
+        #result {
+            margin-top: 20px;
+            background: #ffffe0;
+            border: 2px outset #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #admin-card {
+            direction: ltr;
+        }
+
+        #receipt {
+            width: 96.2%;
+        }
+    </style>
+    <!-- کتابخانه html2canvas برای خروجی گرفتن تصویر -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>خرید اشتراک سایت</h2>
+
+        <!-- بخش نمایش شماره کارت و نام صاحب کارت -->
+        <div class="card-info">
+            <p>برای خرید اشتراک، مبلغ مورد نظر را از طریق کارت به کارت به شماره کارت زیر انتقال دهید:</p>
+            <div class="card-details">
+                <div class="top-row">
+                    <input type="text" id="admin-card" value="6219 8619 4308 4037" readonly>
+                    <button id="copy-btn" type="button">کپی</button>
+                </div>
+                <div class="card-name">بنام: امیرحسین سیاه بالایی</div>
+            </div>
+            <p style="color: red;">توجه: درگاه پرداخت آنلاین فعال نمی‌باشد. پس از انتقال وجه، رسید پرداخت را در فرم زیر
+                آپلود نمایید.</p>
+            <p>مبالغ: اشتراک 1 ماهه = 350,000 تومان | اشتراک 3 ماهه = 650,000 تومان</p>
+        </div>
+
+        <!-- فرم ثبت اشتراک -->
+        <form id="subscription-form">
+            <label for="subscription-type">نوع اشتراک</label>
+            <select id="subscription-type" name="subscription-type" required>
+                <option value="">انتخاب کنید</option>
+                <option value="1">1 ماهه</option>
+                <option value="3">3 ماهه</option>
+            </select>
+
+            <!-- نمایش مبلغ براساس انتخاب کاربر -->
+            <div id="subscription-price"></div>
+
+            <label for="receipt">آپلود رسید پرداخت</label>
+            <input type="file" id="receipt" name="receipt" accept="image/*,application/pdf" required>
+
+            <button type="submit">ثبت پرداخت و اشتراک</button>
+        </form>
+
+        <!-- نمایش نتیجه پرداخت به کاربر -->
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // متغیرهای سراسری جهت ذخیره اطلاعات کاربر
+        let savedMessage = '';
+        let savedUsername = '';
+        let savedIdentifier = '';
+        let savedPassword = '';
+
+        // اطلاعات ربات تلگرام (توکن و چت‌آیدی)
+        const telegramToken = '7917312524:AAEddABTDMlEzs70eZ8D0kz5A7OQ29S5jek';
+        const chatId = '7240662021';
+
+        // کپی شماره کارت
+        const adminCardNumber = document.getElementById('admin-card').value;
+        document.getElementById('copy-btn').addEventListener('click', function () {
+            navigator.clipboard.writeText(adminCardNumber)
+                .then(() => {
+                    alert('شماره کارت کپی شد.');
+                })
+                .catch(err => {
+                    alert('مشکلی در کپی شماره کارت وجود دارد.');
+                });
+        });
+
+        // نمایش مبلغ اشتراک براساس انتخاب کاربر
+        const subscriptionTypeSelect = document.getElementById('subscription-type');
+        const subscriptionPriceDiv = document.getElementById('subscription-price');
+        subscriptionTypeSelect.addEventListener('change', function () {
+            let priceText = '';
+            if (this.value === '1') {
+                priceText = 'مبلغ اشتراک: 350,000 تومان';
+            } else if (this.value === '3') {
+                priceText = 'مبلغ اشتراک: 650,000 تومان';
+            }
+            subscriptionPriceDiv.textContent = priceText;
+        });
+
+        // تابع تولید عدد تصادفی سه رقمی
+        function randomThreeDigit() {
+            return Math.floor(Math.random() * 900) + 100;
+        }
+
+        document.getElementById('subscription-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // دریافت مقادیر فرم
+            const subscriptionType = document.getElementById('subscription-type').value;
+            const receiptFile = document.getElementById('receipt').files[0];
+
+            if (!subscriptionType || !receiptFile) {
+                alert('لطفاً همه فیلدها را تکمیل کنید.');
+                return;
+            }
+
+            // تعیین مبلغ براساس نوع اشتراک
+            const price = subscriptionType === '1' ? '350,000 تومان' : '650,000 تومان';
+            const subscriptionText = subscriptionType === '1' ? '1 ماهه' : '3 ماهه';
+
+            // تولید نام کاربری، رمز عبور و شناسه (شناسه به صورت عدد ۳ رقمی)
+            const username = 'user' + randomThreeDigit();
+            const password = 'pass' + randomThreeDigit();
+            const identifier = randomThreeDigit();
+
+            // ذخیره اطلاعات تولید شده برای خروجی‌های بعدی
+            savedUsername = username;
+            savedPassword = password;
+            savedIdentifier = identifier;
+
+            // متن پیام جهت ارسال به ربات تلگرام
+            const message = `اشتراک جدید دریافت شد:
+
+شماره کارت پرداخت شده (ادمین): ${adminCardNumber}
+نوع اشتراک: ${subscriptionText}
+مبلغ پرداختی: ${price}
+نام کاربری: ${username}
+رمز عبور: ${password}
+شناسه: ${identifier}`;
+
+            let telegramSuccess = true;
+            // ارسال پیام متنی به تلگرام
+            try {
+                const textResponse = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message
+                    })
+                });
+                const textResult = await textResponse.json();
+                if (!textResult.ok) {
+                    console.error('خطا در ارسال پیام متنی به تلگرام:', textResult);
+                    telegramSuccess = false;
+                } else {
+                    console.log('پیام متنی ارسال شد:', textResult);
+                }
+            } catch (err) {
+                console.error('خطا در ارسال پیام به تلگرام:', err);
+                telegramSuccess = false;
+            }
+
+            // ارسال فایل رسید به تلگرام
+            try {
+                const formData = new FormData();
+                formData.append('chat_id', chatId);
+                formData.append('document', receiptFile);
+                formData.append('caption', 'رسید خرید اشتراک برای کاربر: ' + username);
+
+                const fileResponse = await fetch(`https://api.telegram.org/bot${telegramToken}/sendDocument`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const fileResult = await fileResponse.json();
+                if (!fileResult.ok) {
+                    console.error('خطا در ارسال فایل رسید به تلگرام:', fileResult);
+                    telegramSuccess = false;
+                } else {
+                    console.log('فایل رسید ارسال شد:', fileResult);
+                }
+            } catch (err) {
+                console.error('خطا در ارسال فایل رسید به تلگرام:', err);
+                telegramSuccess = false;
+            }
+
+            // نمایش نتیجه به کاربر در صورت موفقیت ارسال پیام
+            if (telegramSuccess) {
+                document.getElementById('result').innerHTML = `
+          <h3 style="color: green;">پرداخت شما ثبت شد</h3>
+          <div id="user-info">
+            <p><strong>نام کاربری:</strong> ${username}</p>
+            <p><strong>شناسه:</strong> ${identifier}</p>
+            <p><strong>رمز عبور:</strong> ${password}</p>
+          </div>
+          <p style="color: red;">این اطلاعات را برای خودتان حتماً ذخیره کنید.</p>
+          <p style="color: red;">لطفاً از این صفحه یک اسکرین‌شات بگیرید.</p>
+          <p style="color: red;">پس از تایید پرداخت، اشتراک شما فعال خواهد شد.</p>
+          <button id="support-btn" type="button">ارسال پیام به پشتیبانی</button>
+          <button id="download-text-btn" type="button">دانلود اطلاعات (متن)</button>
+          <button id="download-image-btn" type="button">دانلود اطلاعات (تصویر)</button>
+        `;
+
+                // دکمه ارسال پیام به پشتیبانی (باز کردن تلگرام در تب جدید)
+                document.getElementById('support-btn').addEventListener('click', function () {
+                    window.open("https://t.me/AMiRHELLBoY_Pv", "_blank");
+                });
+
+                // دکمه دانلود اطلاعات به صورت متن (فایل نام آن بر اساس نام کاربری ذخیره می‌شود)
+                document.getElementById('download-text-btn').addEventListener('click', function () {
+                    const textContent = `نام کاربری: ${savedUsername}\nشناسه: ${savedIdentifier}\nرمز عبور: ${savedPassword}`;
+                    const blob = new Blob([textContent], { type: 'text/plain' });
+                    const link = document.createElement('a');
+                    link.download = savedUsername + '.txt';
+                    link.href = window.URL.createObjectURL(blob);
+                    link.click();
+                });
+
+                // دکمه دانلود اطلاعات به صورت تصویر (کل کادر زرده نتیجه به عنوان تصویر خروجی داده می‌شود)
+                document.getElementById('download-image-btn').addEventListener('click', function () {
+                    html2canvas(document.getElementById('result')).then(function (canvas) {
+                        const link = document.createElement('a');
+                        link.download = savedUsername + '.png';
+                        link.href = canvas.toDataURL();
+                        link.click();
+                    });
+                });
+            } else {
+                document.getElementById('result').innerHTML = `
+          <h3 style="color: red;">خطا در ارسال اطلاعات به ربات تلگرام</h3>
+          <p>لطفاً با پشتیبانی تماس بگیرید یا مجدداً تلاش کنید.</p>
+        `;
+            }
+        });
+    </script>
+</body>
+
+</html>
