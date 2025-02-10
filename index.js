@@ -1,3 +1,7 @@
+/************************************************************
+ * کاربر: هارم , رمز عبور: هارم
+ ************************************************************/
+
 /***********************
  * توابع مربوط به کپچای احراز هویت مجدد (4 رقمی)
  ***********************/
@@ -301,37 +305,49 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.locationMapping = {
                     Location1: [
                         {
-                            generate: function generateGamingIPv6() {
+                            generate: function () {
                                 const prefix = "2a06:1301:4050";
-                                const part1 = Math.floor(Math.random() * 0x10000).toString(16);
-                                const part2 = Math.floor(Math.random() * 0x10000).toString(16);
+                                const part1 = Math.floor(Math.random() * 0x10000)
+                                    .toString(16)
+                                    .padStart(1, "0");
+                                const part2 = Math.floor(Math.random() * 0x10000)
+                                    .toString(16)
+                                    .padStart(1, "0");
                                 return `${prefix}:${part1}:${part2}::1`;
                             }
                         }
                     ],
                     Location2: [
                         {
-                            generate: function generateGamingIPv6() {
+                            generate: function () {
                                 const prefix = "2a00:1d34:8000";
-                                const part1 = Math.floor(Math.random() * 0x10000).toString(16);
-                                const part2 = Math.floor(Math.random() * 0x10000).toString(16);
+                                const part1 = Math.floor(Math.random() * 0x10000)
+                                    .toString(16)
+                                    .padStart(1, "0");
+                                const part2 = Math.floor(Math.random() * 0x10000)
+                                    .toString(16)
+                                    .padStart(1, "0");
                                 return `${prefix}:${part1}:${part2}::1`;
                             }
                         }
                     ],
-
                     Location3: [
                         {
-                            generate: function generateGamingIPv6() {
+                            generate: function () {
                                 const prefix = "2406:da14";
-                                const part1 = Math.floor(Math.random() * 0x10000).toString(16);
-                                const part2 = Math.floor(Math.random() * 0x10000).toString(16);
-                                const part3 = Math.floor(Math.random() * 0x10000).toString(16);  // اضافه کردن part3
+                                const part1 = Math.floor(Math.random() * 0x10000)
+                                    .toString(16)
+                                    .padStart(1, "0");
+                                const part2 = Math.floor(Math.random() * 0x10000)
+                                    .toString(16)
+                                    .padStart(1, "0");
+                                const part3 = Math.floor(Math.random() * 0x10000)
+                                    .toString(16)
+                                    .padStart(1, "0");
                                 return `${prefix}:${part1}:${part2}:${part3}::1`;
                             }
                         }
                     ],
-
                     "سرور گیمینگ": { type: "gaming", generate: generateGamingIPv6 },
                 };
             }
@@ -386,22 +402,45 @@ document.addEventListener("DOMContentLoaded", () => {
             this.showLoading();
             try {
                 let ips;
-                if (
-                    this.version === "IPv6" &&
-                    typeof mappingValue === "object" &&
-                    mappingValue.type === "gaming"
-                ) {
-                    ips = await Promise.all(
-                        Array.from({ length: count }, () => mappingValue.generate())
-                    );
-                    this.state.addToHistory({
-                        ip: ips.join("\n"),
-                        location: selectedLocation,
-                        range: "3505:aa93:aa02:****:****::/64",
-                        count,
-                        timestamp: new Date(),
-                    });
-                } else {
+                if (this.version === "IPv6") {
+                    // اگر mappingValue یک آرایه شامل آبجکتی با تابع generate باشد (مثلاً لوکیشن‌های 1، 2 و 3)
+                    if (Array.isArray(mappingValue) && mappingValue.length > 0 && typeof mappingValue[0].generate === "function") {
+                        ips = await Promise.all(
+                            Array.from({ length: count }, () => mappingValue[0].generate())
+                        );
+                        this.state.addToHistory({
+                            ip: ips.join("\n"),
+                            location: selectedLocation,
+                            range: "Custom IPv6 range",
+                            count,
+                            timestamp: new Date(),
+                        });
+                    }
+                    // برای سرور گیمینگ (آبجکت دارای type="gaming")
+                    else if (mappingValue && mappingValue.type === "gaming" && typeof mappingValue.generate === "function") {
+                        ips = await Promise.all(
+                            Array.from({ length: count }, () => mappingValue.generate())
+                        );
+                        this.state.addToHistory({
+                            ip: ips.join("\n"),
+                            location: selectedLocation,
+                            range: "3505:aa93:aa02:****:****::/64",
+                            count,
+                            timestamp: new Date(),
+                        });
+                    } else {
+                        ips = await Promise.all(
+                            Array.from({ length: count }, () => this.generateIP(mappingValue))
+                        );
+                        this.state.addToHistory({
+                            ip: ips.join("\n"),
+                            location: selectedLocation,
+                            range: mappingValue,
+                            count,
+                            timestamp: new Date(),
+                        });
+                    }
+                } else { // برای IPv4
                     ips = await Promise.all(
                         Array.from({ length: count }, () => this.generateIP(mappingValue))
                     );
@@ -659,6 +698,8 @@ document.addEventListener("DOMContentLoaded", () => {
     /******** ورود و اعتبارسنجی کاربر ********/
     const validUsers = [
         { username: "amir", password: "amir", userId: "1", expiration: "lifetime", created: new Date() },
+        { username: "هارم", password: "هارم", userId: "هارم", expiration: "lifetime", created: new Date() },
+        // نمونه‌های دیگر در صورت نیاز
         // { username: "user30", password: "pass30", userId: "user30", expiration: 30, created: new Date(new Date().getTime() - 20 * 24 * 60 * 60 * 1000) },
         // { username: "user60", password: "pass60", userId: "user60", expiration: 60, created: new Date(new Date().getTime() - 10 * 24 * 60 * 60 * 1000) },
         // { username: "user90", password: "pass90", userId: "user90", expiration: 90, created: new Date(new Date().getTime() - 91 * 24 * 60 * 60 * 1000) },
