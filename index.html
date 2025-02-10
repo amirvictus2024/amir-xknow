@@ -264,6 +264,17 @@
 
   <!-- صفحه اصلی (رابط کاربری کلاسیک) -->
   <div id="main-page" style="display: none;">
+    <header
+      style="display: flex; justify-content: space-between; align-items: center; background: #c0c0c0; padding: 10px; border-bottom: 2px outset #fff;">
+      <button id="appearance-switch"
+        style="font-size: 16px; padding: 10px 20px; background-color: #dcdcdc; border: 2px outset #fff; cursor: pointer;">ظاهر
+        جدید</button>
+      <a href="video.html" target="_blank">
+        <button
+          style="font-size: 16px; padding: 10px 20px; background-color: #dcdcdc; border: 2px outset #fff; cursor: pointer;">ویدیو
+          آموزشی</button>
+      </a>
+    </header>
     <!-- بخش تولید IPv4 -->
     <div id="ipv4-section" class="section">
       <h2>تولید IPv4</h2>
@@ -322,8 +333,8 @@
       <h2>دانلود کانفیگ وایرگارد</h2>
       <select id="wg-config-select">
         <option value="">انتخاب کانفیگ</option>
-        <option value="config1" data-link="https://e.pcloud.link/publink/show?code=XZdlOKZhOL6sKBcXbVKyNyhWtvi9uJV8txy" data-name="کانفیگ شماره 1"
-          data-location="سرور 1-آلمان 1" data-status="active">کانفیگ 1</option>
+        <option value="config1" data-link="https://e.pcloud.link/publink/show?code=XZdlOKZhOL6sKBcXbVKyNyhWtvi9uJV8txy"
+          data-name="کانفیگ شماره 1" data-location="سرور 1-آلمان 1" data-status="active">کانفیگ 1</option>
         <option value="config2" data-link="https://example.com/config2.conf" data-name="کانفیگ 2"
           data-location="Location2" data-status="inactive">کانفیگ 2</option>
         <option value="config3" data-link="https://example.com/config3.conf" data-name="کانفیگ 3"
@@ -336,6 +347,63 @@
 
   <!-- المان Toast برای نمایش پیام‌ها -->
   <div id="toast" class="toast"></div>
+
+  <!-- اسکریپت مربوط به تغییر ظاهر -->
+  <script>
+    // تابع ایجاد انیمیشن بلوپ (Blop) و هدایت به صفحه جدید
+    function switchAppearance(newPageUrl) {
+      // ایجاد یک عنصر پوشان (overlay)
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '50%';
+      overlay.style.left = '50%';
+      overlay.style.transform = 'translate(-50%, -50%) scale(0)';
+      overlay.style.width = '20px';
+      overlay.style.height = '20px';
+      overlay.style.backgroundColor = '#0078d7'; // رنگ اصلی یا آکنت سایت
+      overlay.style.borderRadius = '50%';
+      overlay.style.zIndex = '9999';
+      overlay.style.transition = 'transform 0.6s ease-out, width 0.6s ease-out, height 0.6s ease-out';
+      document.body.appendChild(overlay);
+
+      // اجرای reflow (ضروری است)
+      overlay.offsetHeight;
+
+      // محاسبه بزرگ‌ترین قطر (برای پوشش کامل صفحه)
+      const maxDimension = Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2) * 2;
+
+      // انیمیشن تغییر اندازه و مقیاس
+      overlay.style.transform = 'translate(-50%, -50%) scale(1)';
+      overlay.style.width = maxDimension + 'px';
+      overlay.style.height = maxDimension + 'px';
+
+      // پس از پایان انیمیشن هدایت به صفحه جدید
+      overlay.addEventListener('transitionend', function () {
+        window.location.href = newPageUrl;
+      });
+    }
+
+    // رویداد کلیک دکمه تغییر ظاهر
+    document.addEventListener('DOMContentLoaded', function () {
+      const appearanceBtn = document.getElementById('appearance-switch');
+      if (appearanceBtn) {
+        appearanceBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          // تشخیص صفحه فعلی و تعیین URL صفحه جدید:
+          let currentPath = window.location.pathname.toLowerCase();
+          let newPageUrl = "";
+          if (currentPath.includes("subscription") || currentPath.includes("sub")) {
+            newPageUrl = "new-sub.html";
+          } else if (currentPath.includes("video")) {
+            newPageUrl = "new-video.html";
+          } else {
+            newPageUrl = "new.html";
+          }
+          switchAppearance(newPageUrl);
+        });
+      }
+    });
+  </script>
 
   <!-- اسکریپت مربوط به دانلود کانفیگ وایرگارد -->
   <script>
