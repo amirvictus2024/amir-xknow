@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>خرید اشتراک سایت</title>
+  <style>
+    :root {
+      --primary-bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --accent-color: #0078d7;
+      --accent-color-hover: #005a9e;
+      --text-color: #333;
+      --border-color: #e1e1e1;
+      --transition-duration: 0.3s;
+      --border-radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--primary-bg);
+      direction: rtl;
+      margin: 0;
+      padding: 20px;
+      color: var(--text-color);
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 30px auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform var(--transition-duration);
+    }
+
+    .container:hover {
+      transform: translateY(-2px);
+    }
+
+    h2,
+    h3 {
+      text-align: center;
+    }
+
+    .card-info {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #fff9e6;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      text-align: center;
+    }
+
+    .card-details {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .card-details .top-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      font-size: 16px;
+      width: 250px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 5px;
+      background-color: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: var(--border-radius);
+      transition: background-color var(--transition-duration), transform var(--transition-duration);
+    }
+
+    button:hover {
+      background-color: var(--accent-color-hover);
+    }
+
+    button:active {
+      transform: translateY(2px);
+    }
+
+    .card-name {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 500;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-color);
+      font-size: 14px;
+      border-radius: var(--border-radius);
+      background: #fff;
+    }
+
+    #subscription-price {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    /* استایل ناحیه آپلود با قابلیت درگ و دراپ */
+    .drop-zone {
+      position: relative;
+      width: 100%;
+      padding: 30px;
+      border: 2px dashed var(--border-color);
+      border-radius: var(--border-radius);
+      text-align: center;
+      color: #aaa;
+      transition: background-color 0.3s, border-color 0.3s;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    .drop-zone:hover {
+      background-color: #f0f8ff;
+    }
+
+    .drop-zone--over {
+      background-color: #e0f7ff;
+      border-color: var(--accent-color);
+    }
+
+    .drop-zone input {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      background: #ffffe0;
+      border: 1px solid var(--border-color);
+      padding: 15px;
+      text-align: center;
+      border-radius: var(--border-radius);
+    }
+  </style>
+  <!-- کتابخانه html2canvas جهت گرفتن اسکرین‌شات -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>خرید اشتراک سایت</h2>
+
+    <!-- بخش نمایش اطلاعات پرداخت -->
+    <div class="card-info">
+      <p>برای خرید اشتراک، مبلغ مورد نظر را از طریق کارت به کارت به شماره کارت زیر انتقال دهید:</p>
+      <div class="card-details">
+        <div class="top-row">
+          <input type="text" id="admin-card" value="6219 8619 4308 4037" readonly>
+          <button id="copy-btn" type="button">کپی</button>
+        </div>
+        <div class="card-name">بنام: امیرحسین سیاه بالایی</div>
+      </div>
+      <p style="color: red;">توجه: درگاه پرداخت آنلاین فعال نمی‌باشد. پس از انتقال وجه، رسید پرداخت را در فرم زیر آپلود
+        نمایید.</p>
+      <p>مبالغ: اشتراک 1 ماهه = 350,000 تومان | اشتراک 3 ماهه = 650,000 تومان</p>
+    </div>
+
+    <!-- فرم ثبت اشتراک -->
+    <form id="subscription-form">
+      <label for="subscription-type">نوع اشتراک</label>
+      <select id="subscription-type" name="subscription-type" required>
+        <option value="">انتخاب کنید</option>
+        <option value="1">1 ماهه</option>
+        <option value="3">3 ماهه</option>
+      </select>
+
+      <!-- نمایش مبلغ براساس انتخاب کاربر -->
+      <div id="subscription-price"></div>
+
+      <label for="receipt">آپلود رسید پرداخت</label>
+      <!-- ناحیه درگ و دراپ جهت آپلود فایل -->
+      <div class="drop-zone" id="drop-zone">
+        <span id="drop-zone-text">فایل را اینجا بکشید یا کلیک کنید</span>
+        <input type="file" id="receipt" name="receipt" accept="image/*,application/pdf" required>
+      </div>
+
+      <button type="submit">ثبت پرداخت و اشتراک</button>
+    </form>
+
+    <!-- نمایش نتیجه پرداخت -->
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // متغیرهای سراسری جهت ذخیره اطلاعات تولید شده
+    let savedUsername = '';
+    let savedPassword = '';
+    let savedIdentifier = '';
+
+    // اطلاعات ربات تلگرام (توکن و چت‌آیدی)
+    const telegramToken = '7917312524:AAEddABTDMlEzs70eZ8D0kz5A7OQ29S5jek';
+    const chatId = '7240662021';
+
+    // کپی شماره کارت
+    const adminCardNumber = document.getElementById('admin-card').value;
+    document.getElementById('copy-btn').addEventListener('click', function () {
+      navigator.clipboard.writeText(adminCardNumber)
+        .then(() => {
+          alert('شماره کارت کپی شد.');
+        })
+        .catch(err => {
+          alert('مشکلی در کپی شماره کارت وجود دارد.');
+        });
+    });
+
+    // نمایش مبلغ اشتراک براساس انتخاب کاربر
+    const subscriptionTypeSelect = document.getElementById('subscription-type');
+    const subscriptionPriceDiv = document.getElementById('subscription-price');
+    subscriptionTypeSelect.addEventListener('change', function () {
+      let priceText = '';
+      if (this.value === '1') {
+        priceText = 'مبلغ اشتراک: 350,000 تومان';
+      } else if (this.value === '3') {
+        priceText = 'مبلغ اشتراک: 650,000 تومان';
+      }
+      subscriptionPriceDiv.textContent = priceText;
+    });
+
+    // قابلیت درگ و دراپ برای آپلود فایل
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('receipt');
+    const dropZoneText = document.getElementById('drop-zone-text');
+
+    dropZone.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        updateDropZoneText(fileInput.files[0].name);
+      }
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drop-zone--over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drop-zone--over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drop-zone--over');
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        updateDropZoneText(e.dataTransfer.files[0].name);
+      }
+    });
+
+    function updateDropZoneText(filename) {
+      dropZoneText.textContent = filename;
+    }
+
+    // تابع تولید عدد تصادفی سه رقمی
+    function randomThreeDigit() {
+      return Math.floor(Math.random() * 900) + 100;
+    }
+
+    document.getElementById('subscription-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      // دریافت مقادیر فرم
+      const subscriptionType = document.getElementById('subscription-type').value;
+      const receiptFile = fileInput.files[0];
+
+      if (!subscriptionType || !receiptFile) {
+        alert('لطفاً همه فیلدها را تکمیل کنید.');
+        return;
+      }
+
+      // تعیین مبلغ و متن اشتراک براساس انتخاب کاربر
+      const price = subscriptionType === '1' ? '350,000 تومان' : '650,000 تومان';
+      const subscriptionText = subscriptionType === '1' ? '1 ماهه' : '3 ماهه';
+
+      // تولید نام کاربری، رمز عبور و شناسه
+      const username = 'user' + randomThreeDigit();
+      const password = 'pass' + randomThreeDigit();
+      const identifier = randomThreeDigit();
+
+      savedUsername = username;
+      savedPassword = password;
+      savedIdentifier = identifier;
+
+      // متن پیام جهت ارسال به تلگرام
+      const message = `اشتراک جدید دریافت شد:
+    
+شماره کارت پرداخت شده (ادمین): ${adminCardNumber}
+نوع اشتراک: ${subscriptionText}
+مبلغ پرداختی: ${price}
+نام کاربری: ${username}
+رمز عبور: ${password}
+شناسه: ${identifier}`;
+
+      let telegramSuccess = true;
+      // ارسال پیام متنی به تلگرام
+      try {
+        const textResponse = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message
+          })
+        });
+        const textResult = await textResponse.json();
+        if (!textResult.ok) {
+          console.error('خطا در ارسال پیام متنی به تلگرام:', textResult);
+          telegramSuccess = false;
+        }
+      } catch (err) {
+        console.error('خطا در ارسال پیام به تلگرام:', err);
+        telegramSuccess = false;
+      }
+
+      // ارسال فایل رسید به تلگرام
+      try {
+        const formData = new FormData();
+        formData.append('chat_id', chatId);
+        formData.append('document', receiptFile);
+        formData.append('caption', 'رسید خرید اشتراک برای کاربر: ' + username);
+
+        const fileResponse = await fetch(`https://api.telegram.org/bot${telegramToken}/sendDocument`, {
+          method: 'POST',
+          body: formData
+        });
+        const fileResult = await fileResponse.json();
+        if (!fileResult.ok) {
+          console.error('خطا در ارسال فایل رسید به تلگرام:', fileResult);
+          telegramSuccess = false;
+        }
+      } catch (err) {
+        console.error('خطا در ارسال فایل رسید به تلگرام:', err);
+        telegramSuccess = false;
+      }
+
+      // نمایش نتیجه به کاربر
+      if (telegramSuccess) {
+        document.getElementById('result').innerHTML = `
+          <h3 style="color: green;">پرداخت شما ثبت شد</h3>
+          <div id="user-info">
+            <p><strong>نام کاربری:</strong> ${username}</p>
+            <p><strong>شناسه:</strong> ${identifier}</p>
+            <p><strong>رمز عبور:</strong> ${password}</p>
+          </div>
+          <p style="color: red;">این اطلاعات را برای خودتان حتماً ذخیره کنید.</p>
+          <p style="color: red;">لطفاً از این صفحه یک اسکرین‌شات بگیرید.</p>
+          <p style="color: red;">پس از تایید پرداخت، اشتراک شما فعال خواهد شد.</p>
+          <button id="support-btn" type="button">ارسال پیام به پشتیبانی</button>
+          <button id="download-text-btn" type="button">دانلود اطلاعات (متن)</button>
+          <button id="download-image-btn" type="button">دانلود اطلاعات (تصویر)</button>
+        `;
+
+        // دکمه ارسال پیام به پشتیبانی (باز کردن تلگرام در تب جدید)
+        document.getElementById('support-btn').addEventListener('click', function () {
+          window.open("https://t.me/AMiRHELLBoY_Pv", "_blank");
+        });
+
+        // دکمه دانلود اطلاعات به صورت متن
+        document.getElementById('download-text-btn').addEventListener('click', function () {
+          const textContent = `نام کاربری: ${savedUsername}\nشناسه: ${savedIdentifier}\nرمز عبور: ${savedPassword}`;
+          const blob = new Blob([textContent], { type: 'text/plain' });
+          const link = document.createElement('a');
+          link.download = savedUsername + '.txt';
+          link.href = window.URL.createObjectURL(blob);
+          link.click();
+        });
+
+        // دکمه دانلود اطلاعات به صورت تصویر (استفاده از html2canvas)
+        document.getElementById('download-image-btn').addEventListener('click', function () {
+          html2canvas(document.getElementById('result')).then(function (canvas) {
+            const link = document.createElement('a');
+            link.download = savedUsername + '.png';
+            link.href = canvas.toDataURL();
+            link.click();
+          });
+        });
+      } else {
+        document.getElementById('result').innerHTML = `
+          <h3 style="color: red;">خطا در ارسال اطلاعات به ربات تلگرام</h3>
+          <p>لطفاً با پشتیبانی تماس بگیرید یا مجدداً تلاش کنید.</p>
+        `;
+      }
+    });
+  </script>
+</body>
+
+</html>
