@@ -695,10 +695,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const validUsers = [
         { username: "amir", password: "amir", userId: "1", expiration: "lifetime", created: new Date() },
         // نمونه‌های دیگر در صورت نیاز
-        // { username: "user30", password: "pass30", userId: "user30", expiration: 30, created: new Date(new Date().getTime() - 20 * 24 * 60 * 60 * 1000) },
+        { username: "user30", password: "pass30", userId: "user30", expiration: 30, created: new Date(new Date().getTime() - 20 * 24 * 60 * 60 * 1000) },
         // { username: "user60", password: "pass60", userId: "user60", expiration: 60, created: new Date(new Date().getTime() - 10 * 24 * 60 * 60 * 1000) },
-        // { username: "user90", password: "pass90", userId: "user90", expiration: 90, created: new Date(new Date().getTime() - 91 * 24 * 60 * 60 * 1000) },
-        // { username: "user120", password: "pass120", userId: "user120", expiration: 120, created: new Date(new Date().getTime() - 100 * 24 * 60 * 60 * 1000) },
+        { username: "user90", password: "pass90", userId: "user90", expiration: 90, created: new Date(new Date().getTime() - 91 * 24 * 60 * 60 * 1000) },
+        { username: "user180", password: "pass180", userId: "user180", expiration: 180, created: new Date(new Date().getTime() - 100 * 24 * 60 * 60 * 1000) },
     ];
     const loginForm = document.getElementById("login-form");
     loginForm.addEventListener("submit", (e) => {
